@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
-User = get_user_model()
+User = settings.AUTH_USER_MODEL
 
 
 class Wishlist(models.Model):
@@ -10,5 +10,5 @@ class Wishlist(models.Model):
 
 
 class WishlistProduct(models.Model):
-    product = models.ForeignKey('products.Product', related='wishlist', on_delete=models.CASCADE)
+    product = models.ForeignKey('products.Product', related_name='wishlist', on_delete=models.CASCADE)
     wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE)

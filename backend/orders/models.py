@@ -20,10 +20,10 @@ class Order(models.Model):
     order_code = models.CharField(max_length=8, unique=True)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True, blank=True)
-    shipping = models.ForeignKey('Shipping', related_name='order', on_delete=models.SET_NULL)
-    shipping_address = models.ForeignKey('base.Address', on_delete=models.CASCADE)
+    shipping = models.ForeignKey('Shipping', related_name='order', on_delete=models.SET_NULL, null=True)
+    shipping_address = models.ForeignKey('users.Address', on_delete=models.CASCADE)
     order_status = models.CharField(max_length=50, choices=ORDER_STATUS_CHOICES, default='pending')
-    payment = models.OneToOneField('Payment', related_name='order', on_delete=models.SET_NULL)
+    payment = models.OneToOneField('payment.Payment', related_name='order', on_delete=models.SET_NULL, null=True)
     
     def total_price(self):
         return sum([pucharse.get_final_price() for pucharse in self.pucharse.all()])
