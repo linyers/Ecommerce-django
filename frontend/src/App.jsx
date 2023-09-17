@@ -7,8 +7,8 @@ import ChangePasswordEmail from "./pages/auth/ChangePasswordEmail";
 import ChangePassword from "./pages/auth/ChangePassword";
 import "./App.css";
 
-import Header from './components/navigation/Header'
-import PrivateRoutes from './utils/PrivateRoutes'
+import Header from "./components/navigation/Header";
+import PrivateRoutes from "./utils/PrivateRoutes";
 
 import { AuthProvider } from "./context/AuthContext";
 
@@ -19,14 +19,7 @@ function App() {
         <AuthProvider>
           <Header />
           <Routes>
-            <Route
-              path="/"
-              element={
-                <PrivateRoutes>
-                  <Home />
-                </PrivateRoutes>
-              }
-            />
+            <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/change-password" element={<ChangePasswordEmail />} /> */}
