@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -52,8 +53,9 @@ class SignupSerializer(serializers.ModelSerializer):
         subject='Activate your user account.'
         msg='confirm your registration:'
         view='users:activate'
-        
-        send_email_confirm = send_email(self.context['request'], user, user.email, subject=subject, msg=msg, view=view)
+        client_url = settings.CLIENT_URL
+
+        send_email_confirm = send_email(client_url, user, user.email, subject=subject, msg=msg, view=view)
         if send_email_confirm:
             raise serializers.ValidationError({'Email': f'Problem sending email to {user.email}, check if you typed correctly.'})
         

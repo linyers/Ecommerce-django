@@ -1,7 +1,12 @@
 import { createContext, useState, useEffect } from "react";
 import jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { postSignup, postLogin, postRefreshToken } from "../utils/auth.api";
+import {
+  postSignup,
+  postLogin,
+  postRefreshToken,
+  getActivateAcount,
+} from "../utils/auth.api";
 
 const AuthContext = createContext();
 
@@ -36,13 +41,7 @@ export function AuthProvider({ children }) {
     return () => clearInterval(interval);
   }, [authTokens, loading]);
 
-  const registerUser = async (
-    e,
-    email,
-    username,
-    password,
-    repeatPassword
-  ) => {
+  const registerUser = async (e, email, username, password, repeatPassword) => {
     e.preventDefault();
     try {
       const response = await postSignup({
@@ -50,30 +49,34 @@ export function AuthProvider({ children }) {
         username,
         password,
         repeat_password: repeatPassword,
-      })
+      });
     } catch (err) {
-      return err.response.data
+      return err.response.data;
     }
-    
-    navigate('/active');
+
+    navigate("/");
   };
 
   const loginUser = async (e, email, password) => {
     e.preventDefault();
-    const response = await postLogin({
-      email: email,
-      password: password,
-    });
+    try {
+      const response = await postLogin({
+        email: email,
+        password: password,
+      });
 
-    const data = await response.data;
+      const data = await response.data;
 
-    if (data) {
-      localStorage.setItem("authTokens", JSON.stringify(data));
-      setAuthTokens(data);
-      setUser(jwtDecode(data.access));
-      navigate("/");
-    } else {
-      alert("Something went wrong while logging in the user!");
+      if (data) {
+        localStorage.setItem("authTokens", JSON.stringify(data));
+        setAuthTokens(data);
+        setUser(jwtDecode(data.access));
+        navigate("/");
+      } else {
+        alert("Something went wrong while logging in the user!");
+      }
+    } catch (err) {
+      return err.response.data;
     }
   };
 
@@ -98,10 +101,17 @@ export function AuthProvider({ children }) {
       logoutUser();
     }
 
-    console.log(localStorage.getItem("authTokens"));
-
     if (loading) {
       setLoading(false);
+    }
+  };
+
+  const activateUser = async (uid, token) => {
+    try {
+      const response = await getActivateAcount(uid, token);
+      return response.status;
+    } catch (err) {
+      return err.response.status;
     }
   };
 
@@ -111,6 +121,7 @@ export function AuthProvider({ children }) {
     loginUser: loginUser,
     logoutUser: logoutUser,
     registerUser: registerUser,
+    activateUser: activateUser,
   };
 
   return (

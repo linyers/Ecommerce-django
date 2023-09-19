@@ -7,15 +7,16 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import six
 
 
-def send_email(request, user, to_email, **kwargs):
+def send_email(client_url, user, to_email, **kwargs):
     mail_subject = kwargs['subject']
     message = render_to_string('email_message.html', {
         'user': user.email,
         'msg': kwargs['msg'],
-        'domain': get_current_site(request).domain,
+        'client_url': client_url,
+        # 'domain': get_current_site(request).domain,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': account_activation_token.make_token(user),
-        'protocol': 'https' if request.is_secure() else 'http',
+        # 'protocol': 'https' if request.is_secure() else 'http',
         'view': kwargs['view']
     })
     email = EmailMessage(mail_subject, message, to=[to_email])
@@ -25,10 +26,12 @@ def send_email(request, user, to_email, **kwargs):
     return False
 
 
-class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
-    def _make_hash_value(self, user, timestamp):
-        return (
-            six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.get_username)
-        )
-    
-account_activation_token = AccountActivationTokenGenerator()
+# class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
+#     def _make_hash_value(self, user, timestamp):
+#         print(six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.get_username))
+#         return (
+#             six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.get_username)
+#         )
+# account_activation_token = AccountActivationTokenGenerator()
+
+account_activation_token = PasswordResetTokenGenerator() 

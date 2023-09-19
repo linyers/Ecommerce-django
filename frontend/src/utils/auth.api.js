@@ -15,3 +15,7 @@ export const postLogin = (body) => {
 export const postRefreshToken = (body) => {
   return authAPI.post("auth/token-refresh/", body);
 };
+
+export const getActivateAcount = (uidb64, token) => {
+  return authAPI.get(`auth/activate/${uidb64}/${token}`);
+};

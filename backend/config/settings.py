@@ -25,6 +25,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ]
 
+CLIENT_URL = os.environ.get('CLIENT_URL')
+
 ALLOWED_HOSTS = []
 
 # Emailing settings
@@ -120,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-PASSWORD_RESET_TIMEOUT = 1800
+PASSWORD_RESET_TIMEOUT = 600
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -150,6 +152,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 MEDIA_URL = 'media/'
+
+MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media')
+STATIC_ROOT = Path.joinpath(BASE_DIR,'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

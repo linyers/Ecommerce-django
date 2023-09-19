@@ -2,9 +2,21 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.dispatch import receiver
+from datetime import timedelta
 import uuid
 
 User = get_user_model()
+
+
+class PucharseManager(models.Manager):
+    def range_week_date(self):
+        today = timezone.now.strftime("%Y-%m-%d")
+
+        start_date = timezone.now - timedelta(days=7)
+        start_date = start_date.strftime("%Y-%m-%d")
+
+        return self.filter(pucharse_date__range=[start_date, today])
 
 
 ORDER_STATUS_CHOICES = (
@@ -33,6 +45,9 @@ class Pucharse(models.Model):
     quantity = models.IntegerField(default=1)
     product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='pucharse')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='pucharse')
+    pucharse_date = models.DateField(auto_now_add=True)
+
+    objects = PucharseManager
 
     def __str__(self) -> str:
         return f'{self.quantity} of {self.product.name}'
@@ -84,8 +99,21 @@ def set_order_end_date(sender, instance, *args, **kwargs):
 def set_stock(sender, instance, *args, **kwargs):
     instance.product.stock -= instance.quantity
     instance.product.sold += 1
+    instance.product.save()
+
+def set_trending(sender, instance, *args, **kwargs):
+    solded = Pucharse.objects.filter(product__id=instance.product.id).aaggregate(models.Sum('quantity'))
+    if solded['quantity__sum'] > 100:
+        instance.product.trending = True
+        instance.product.save()
+        return
+    
+    instance.product.trending = False
+    instance.product.save()
+
 
 pre_save.connect(set_order_code, sender=Order)
 pre_save.connect(set_order_end_date, sender=Order)
 pre_save.connect(set_order_address, sender=Order)
 post_save.connect(set_stock, sender=Pucharse)
+post_save.connect(set_trending, sender=Pucharse)

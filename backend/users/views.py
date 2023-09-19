@@ -83,7 +83,7 @@ class SignupAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(status=200, data=serializer.data)
+        return Response(status=200, data={'success': 'Check your email. Note: Check spam'})
 
 
 def get_user_with_token(uidb64):
@@ -102,7 +102,7 @@ def activate(request, uidb64, token):
     user = get_user_with_token(uidb64)
 
     if user and account_activation_token.check_token(user, token):
-        user.is_email_confirmed = True
+        user.is_active = True
         user.save()
 
         return JsonResponse({"Success": "Thank you for your email confirmation. Now you can login your account."})

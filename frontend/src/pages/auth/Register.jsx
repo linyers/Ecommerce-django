@@ -26,16 +26,15 @@ function Register() {
           );
           setLoad(false);
           setError(err);
-          console.log(error);
         }}
       >
-        {Object.keys(error).length !== 0 ? (
+        {Object.keys(error).length !== 0 && (
           <ul>
             {Object.keys(error).map((field, i) => {
               return <FormErrors field={field} error={error[field]} key={i} />;
             })}
           </ul>
-        ) : null}
+        )}
         <input
           className={`${error["email"] ? "ring-2 ring-red-600" : null}`}
           type="email"
