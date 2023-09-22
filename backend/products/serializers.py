@@ -2,8 +2,6 @@ from rest_framework import serializers
 
 from .models import Product, Category, ProductImage
 
-from collections import OrderedDict
-
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,16 +9,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = ('image',)
-
-
 class ProductSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(read_only=True)
     category = serializers.CharField(max_length=150, required=True)
-    images = ProductImageSerializer(many=True, read_only=True)
+    images = serializers.StringRelatedField(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child = serializers.ImageField(max_length = 1000000, allow_empty_file = False, use_url = False),
         write_only = True,

@@ -25,7 +25,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/activate/:uid/:token" element={<Activate />} />
             {/* <Route path="/change-password" element={<ChangePasswordEmail />} /> */}
-            {/* <Route path="/change-password-confirm" element={<ChangePassword />} /> */}
+            {/* <Route path="/change-password/:uid/:token" element={<ChangePassword />} /> */}
             <Route />
           </Routes>
         </AuthProvider>

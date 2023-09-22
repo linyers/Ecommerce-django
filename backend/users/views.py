@@ -12,8 +12,8 @@ from rest_framework.serializers import ValidationError
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .models import Address
 from .permissions import IsOwnerOrAdmin
+from .models import Address
 from .serializers import UserSerializer, AddressSerializer, MyTokenObtainPairSerializer, SignupSerializer, ChangePasswordEmailSerializer, ChangePasswordSerializer
 from .utils import account_activation_token, send_email
 
@@ -60,7 +60,7 @@ class AddressViewSet(viewsets.ModelViewSet):
             data['user'] = user
             address = Address.objects.create(**data)
             address.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'id':address.id, **serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

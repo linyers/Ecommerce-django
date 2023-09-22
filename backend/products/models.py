@@ -2,10 +2,8 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
-from django.utils import timezone
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save
 from django.conf import settings
-from datetime import datetime
 import uuid
 import os
 
@@ -56,7 +54,7 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to=product_img_path, null=True, blank=True)
 
     def __str__(self) -> str:
-        return f'image {self.id} of {self.product.title}'
+        return settings.SITE + self.image.url
 
 
 def set_slug(sender, instance, *args, **kwargs):

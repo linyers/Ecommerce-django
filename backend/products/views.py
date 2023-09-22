@@ -4,26 +4,26 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from django.utils.text import slugify
-
 from .models import Product, ProductImage, Category
-from .serializers import ProductSerializer, ProductImageSerializer, CategorySerializer
+from .serializers import ProductSerializer, CategorySerializer
 from .permissions import IsOwnerOrAdmin
 from .pagination import ProductPagination
 
 
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    pagination_class = ProductPagination
-    lookup_field = 'slug'
-
+class CustomViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'retrieve' or self.action == 'list':
             permission_classes = [AllowAny,]
         else:
             permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
         return [permission() for permission in permission_classes]
+
+
+class ProductViewSet(CustomViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = ProductPagination
+    lookup_field = 'slug'
     
     def list(self, request, *args, **kwargs):
         queryset = Product.objects.all()

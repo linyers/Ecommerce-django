@@ -26,6 +26,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CLIENT_URL = os.environ.get('CLIENT_URL')
+SITE = os.environ.get('SITE')
 
 ALLOWED_HOSTS = []
 

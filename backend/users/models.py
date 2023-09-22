@@ -40,6 +40,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, username, password):
         user = self.create_user(email=email, username=username, password=password)
+        user.is_deliverer = True
         user.is_superuser = True
         user.is_admin = True
         user.is_staff = True
@@ -58,6 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=17, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
+    is_deliverer = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

@@ -11,10 +11,10 @@ class Payment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.email
+        return self.user.email + str(self.timestamp)
 
 
 def set_confirm_order(sender, instance, *args, **kwargs):
-    instance.order_status = 'confirm'
+    instance.order.order_status = 'confirm'
 
 post_save.connect(set_confirm_order, sender=Payment)
