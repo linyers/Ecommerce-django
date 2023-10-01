@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.db.models import Sum
 
 from .models import Order, Pucharse, Refund, Shipping
 from users.models import Address
@@ -11,11 +10,12 @@ class ShippingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipping
         fields = '__all__'
+        extra_kwargs = {
+            'deliverer': {'read_only': True},
+        }
 
 
 class PucharseSerializer(serializers.ModelSerializer):
-    product = serializers.IntegerField()
-
     class Meta:
         model = Pucharse
         fields = '__all__'
@@ -27,53 +27,77 @@ class PucharseSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     pucharses = PucharseSerializer(many=True)
-    shipping_address_upload = serializers.IntegerField(write_only=True)
-    shipping_upload = serializers.IntegerField(write_only=True)
+    from_address_upload = serializers.IntegerField(write_only=True, allow_null=True)
+    to_address_upload = serializers.IntegerField(write_only=True, allow_null=True)
+    shipping = ShippingSerializer(default=None)
 
     class Meta:
         model = Order
 
-        fields = ('costumer',
+        fields = ('id',
+                'costumer',
                 'order_code',
                 'start_date',
                 'end_date',
+                'with_shipping',
                 'shipping',
-                'shipping_address',
+                'from_address',
+                'to_address',
                 'order_status',
                 'payment',
                 'pucharses',
-                'shipping_address_upload',
-                'shipping_upload')
+                'from_address_upload',
+                'to_address_upload',)
         
         extra_kwargs = {
-            'shipping': {'read_only': True},
-            'shipping_address': {'read_only': True},
+            'from_address': {'read_only': True},
+            'to_address': {'read_only': True},
             'payment': {'read_only': True},
             'order_code': {'read_only': True},
             'costumer': {'read_only': True}
         }
 
+    def validate(self, attrs):
+        pucharses_data = attrs.get('pucharses')
+        for pucharse in pucharses_data:
+            if pucharse['quantity'] > pucharse['product'].stock:
+                raise serializers.ValidationError({'product': 'Quantity out of range of product stock.'})
+        return attrs
+
     def create(self, validated_data):
-        validated_data.pop('shipping_upload')
+        shipping_data = validated_data.pop('shipping')
         pucharses_data = validated_data.pop('pucharses')
-        shipping_address_data = validated_data.pop('shipping_address_upload')
+        from_address_data = validated_data.pop('from_address_upload')
+        to_address_data = validated_data.pop('to_address_upload')
 
-        shipping_address = Address.objects.get(id=shipping_address_data)
-        costumer = shipping_address.user
+        from_address = \
+            Address.objects.get(id=from_address_data) if from_address_data else None
+        to_address = \
+            Address.objects.get(id=to_address_data) if to_address_data else None
 
-        order = Order.objects.create(costumer=costumer, shipping_address=shipping_address, **validated_data)
+        costumer = self.context['request'].user
+
+        order = Order.objects.create(costumer=costumer,
+                                    from_address=from_address,
+                                    to_address=to_address, 
+                                    **validated_data)
         pucharses = list()
         for pucharse in pucharses_data:
-            product = Product.objects.get(id=pucharse['product'])
-            pucharses.append(Pucharse(product=product, order=order, **pucharse))
+            pucharses.append(Pucharse(order=order, **pucharse))
         Pucharse.objects.bulk_create(pucharses)
 
         return order
 
     def update(self, instance, validated_data):
-        shipping_data = validated_data.pop('shipping_upload')
-        shipping = Shipping.objects.get(id=shipping_data)
-        instance.shipping = shipping
+        user = self.context['request'].user
+        if user.is_deliverer:
+            from_address_data = validated_data.pop('from_address_upload')
+            from_address = Address.objects.get(id=from_address_data)
+            instance.from_address = from_address
+
+            shipping_data = validated_data.pop('shipping', None)
+            shipping = Shipping.objects.create(deliverer=user, **shipping_data)
+            instance.shipping = shipping
         
         instance.order_status = validated_data.pop('order_status')
         instance.save()

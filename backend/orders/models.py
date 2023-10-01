@@ -9,6 +9,12 @@ User = get_user_model()
 
 
 class PucharseManager(models.Manager):
+    def bulk_create(self, objs, **kwargs) -> list:
+        a = super(models.Manager,self).bulk_create(objs,**kwargs)
+        for i in objs:
+            post_save.send(i.__class__, instance=i, created=True)
+        return a
+    
     def range_week_date(self):
         today = timezone.now().strftime("%Y-%m-%d")
 
@@ -16,6 +22,11 @@ class PucharseManager(models.Manager):
         start_date = start_date.strftime("%Y-%m-%d")
 
         return self.filter(pucharse_date__range=[start_date, today])
+
+
+class OrderManager(models.Manager):
+    def waiting_shipping(self):
+        return self.filter(shipping=None).filter(with_shipping=True).filter(order_status='confirm')
 
 
 ORDER_STATUS_CHOICES = (
@@ -32,11 +43,15 @@ class Order(models.Model):
     order_code = models.CharField(max_length=8, unique=True)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True, blank=True)
+    with_shipping = models.BooleanField()
     shipping = models.OneToOneField('Shipping', related_name='order', on_delete=models.SET_NULL, null=True)
-    shipping_address = models.ForeignKey('users.Address', on_delete=models.CASCADE)
+    from_address = models.ForeignKey('users.Address', related_name='from_address', on_delete=models.CASCADE, null=True)
+    to_address = models.ForeignKey('users.Address', related_name='to_address', on_delete=models.CASCADE, null=True)
     order_status = models.CharField(max_length=50, choices=ORDER_STATUS_CHOICES, default='pending')
     payment = models.OneToOneField('payment.Payment', related_name='order', on_delete=models.SET_NULL, null=True)
     
+    objects = OrderManager()
+
     def total_price(self):
         return sum([pucharse.get_final_price() for pucharse in self.pucharse.all()])
 
@@ -44,12 +59,12 @@ class Order(models.Model):
 class Pucharse(models.Model):
     quantity = models.IntegerField()
     product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='pucharse')
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='pucharse')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='pucharses', null=True)
     pucharse_date = models.DateField(auto_now_add=True)
 
     objects = PucharseManager()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.quantity} of {self.product.title}'
 
     def get_price(self):
@@ -84,14 +99,10 @@ class Shipping(models.Model):
 
 
 def set_order_code(sender, instance, *args, **kwargs):
+    if instance.order_code:
+        return
     id = str(uuid.uuid4())
     instance.order_code = f'{id[:8]}'
-
-
-def set_order_address(sender, instance, *args, **kwargs):
-    address = list(filter(lambda x: x.default, instance.costumer.address.all()))
-    if address:
-        instance.shipping_address = address[0]
 
 
 def set_order_end_date(sender, instance, *args, **kwargs):
@@ -119,6 +130,5 @@ def set_trending(sender, instance, *args, **kwargs):
 
 pre_save.connect(set_order_code, sender=Order)
 pre_save.connect(set_order_end_date, sender=Order)
-pre_save.connect(set_order_address, sender=Order)
 post_save.connect(set_stock, sender=Pucharse)
 post_save.connect(set_trending, sender=Pucharse)

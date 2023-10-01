@@ -1,0 +1,16 @@
+{
+    "slides": [        
+        {
+            "link": "/",
+            "image": "Banner1.png"
+        },
+        {
+            "link": "/",
+            "image": "Banner2.png"
+        },
+        {
+            "link": "/",
+            "image": "Banner3.png"
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+.overflow-slick {
+  overflow: auto;
+  transition: all 2s;
+}
+
+.overflow-slick::-webkit-scrollbar {
+  width: 5px;
+  height: 7px;
+  margin: 0;
+  padding: 0;
+}
+
+.overflow-slick::-webkit-scrollbar-thumb {
+  background: #fff;
+  border-radius: 5px;
+}
+
+.overflow-slick::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+}
+
+.overflow-slick:hover::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+  }
+  
+  .overflow-slick:hover::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }

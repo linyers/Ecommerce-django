@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils.text import slugify
 from django.db.models.signals import pre_save
 from django.conf import settings
+import re
 import uuid
 import os
 
@@ -11,7 +12,10 @@ User = get_user_model()
 
 
 def product_img_path(instance, filename):
-    image = f'products/{instance.product.title}/{instance.image}'
+    pattern = r'[a-zA-Z0-9_-]+'
+    title = ' '.join(re.findall(pattern, instance.product.title))
+    id = str(uuid.uuid4())[:4]
+    image = f'products/{title}/{id}.jpg'
     full_path = os.path.join(settings.MEDIA_ROOT, image)
 
     if os.path.exists(full_path):
@@ -51,7 +55,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True, related_name='images')
-    image = models.ImageField(upload_to=product_img_path, null=True, blank=True)
+    image = models.ImageField(upload_to=product_img_path, max_length=500, null=True, blank=True)
 
     def __str__(self) -> str:
         return settings.SITE + self.image.url

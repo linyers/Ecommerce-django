@@ -6,10 +6,13 @@ import Register from "./pages/auth/Register";
 import Activate from "./pages/auth/Activate";
 import ChangePasswordEmail from "./pages/auth/ChangePasswordEmail";
 import ChangePassword from "./pages/auth/ChangePassword";
-import "./App.css";
+import ProductsPage from './pages/ProductsPage'
 
 import Header from "./components/navigation/Header";
+import Footer from "./components/navigation/Footer";
 import PrivateRoutes from "./utils/PrivateRoutes";
+
+import "./App.css";
 
 import { AuthProvider } from "./context/AuthContext";
 
@@ -26,8 +29,9 @@ function App() {
             <Route path="/activate/:uid/:token" element={<Activate />} />
             {/* <Route path="/change-password" element={<ChangePasswordEmail />} /> */}
             {/* <Route path="/change-password/:uid/:token" element={<ChangePassword />} /> */}
-            <Route />
+            <Route path="/s" element={<ProductsPage />} />
           </Routes>
+          <Footer />
         </AuthProvider>
       </Router>
     </div>

@@ -22,7 +22,9 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls', namespace='users')),
-    path('api/', include('products.urls', namespace='products'))
+    path('api/', include('products.urls', namespace='products')),
+    path('api/', include('orders.urls', namespace='orders')),
+    path('api/cart/', include('cart.urls', namespace='cart')),
 ]
 
 if settings.DEBUG:
