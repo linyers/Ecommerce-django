@@ -25,18 +25,20 @@ function Activate() {
   }, []);
 
   return (
-    <div>
-      {status === 200 ? (
-        <>
-          <p>Gracias por validar tu email. Redireccionando al login</p>
-          {redirect ? <Navigate to="/login" /> : <Loader />}
-        </>
-      ) : (
-        <>
-          <p>Este link ya no es valido. Redireccionando a home</p>
-          {redirect ? <Navigate to="/" /> : <Loader />}
-        </>
-      )}
+    <div className="bg-gray-600 flex justify-center p-20">
+      <div className="flex flex-col w-1/3 gap-5 shadow-md rounded-md bg-white p-8">
+        {status === 200 ? (
+          <>
+            <p className="text-2xl text-center font-semibold text-gray-800">Gracias por validar tu email. Redireccionando al login</p>
+            {redirect ? <Navigate to="/login" /> : <Loader />}
+          </>
+        ) : (
+          <>
+            <p className="text-2xl text-center font-semibold text-gray-800">Este link ya no es valido. Redireccionando a home</p>
+            {redirect ? <Navigate to="/" /> : <Loader />}
+          </>
+        )}
+      </div>
     </div>
   );
 }

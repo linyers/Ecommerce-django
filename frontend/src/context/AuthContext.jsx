@@ -6,6 +6,8 @@ import {
   postLogin,
   postRefreshToken,
   getActivateAcount,
+  postChangePasswordEmail,
+  postChangePassword,
 } from "../utils/auth.api";
 
 const AuthContext = createContext();
@@ -115,13 +117,47 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const changePasswordEmail = async (e, email) => {
+    e.preventDefault();
+    try {
+      const response = await postChangePasswordEmail({
+        email,
+      });
+    } catch (err) {
+      return err.response.data;
+    }
+    navigate("/");
+  }
+
+  const changePassword = async (e, newPassword, repeatNewPassword, uid, token) => {
+    e.preventDefault();
+    try {
+      const response = await postChangePassword(uid, token, {
+        new_password: newPassword,
+        repeat_new_password: repeatNewPassword,
+      })
+    } catch (err) {
+      if (err.response.status === 404) {
+        const redirectHome = setTimeout(() => {
+          navigate("/")
+        }, 2000);
+        
+        return {Error: 'Link invalido, Redireccionando al home'}
+      }
+      return err.response.data;
+    }
+    navigate("/login");
+  }
+
   const contextData = {
-    user: user,
-    authTokens: authTokens,
-    loginUser: loginUser,
-    logoutUser: logoutUser,
-    registerUser: registerUser,
-    activateUser: activateUser,
+    user,
+    authTokens,
+    loginUser,
+    logoutUser,
+    registerUser,
+    activateUser,
+    changePasswordEmail,
+    changePassword,
   };
 
   return (

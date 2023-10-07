@@ -86,7 +86,7 @@ export default function ProductsSlick({ query, limit }) {
       {products?.slice(0, limit).map((p, i) => {
         return (
           <div key={i} className="flex">
-            <Link className="w-64 h-64">
+            <Link to={`/${p.slug}`} className="w-64 h-64">
               <img
                 className="w-full h-full"
                 src={p.images[0]}

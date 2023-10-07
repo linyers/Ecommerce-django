@@ -20,10 +20,17 @@
 }
 
 .overflow-slick:hover::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 5px;
-  }
-  
-  .overflow-slick:hover::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
+  background: #888;
+  border-radius: 5px;
+}
+
+.overflow-slick:hover::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.autocomplete {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}

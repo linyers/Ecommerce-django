@@ -27,9 +27,10 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/activate/:uid/:token" element={<Activate />} />
-            {/* <Route path="/change-password" element={<ChangePasswordEmail />} /> */}
-            {/* <Route path="/change-password/:uid/:token" element={<ChangePassword />} /> */}
+            <Route path="/change-password" element={<ChangePasswordEmail />} />
+            <Route path="/change-password/:uid/:token" element={<ChangePassword />} />
             <Route path="/s" element={<ProductsPage />} />
+            <Route path="/:slug" element={<ProductsPage />} />
           </Routes>
           <Footer />
         </AuthProvider>

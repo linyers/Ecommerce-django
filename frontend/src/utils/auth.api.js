@@ -19,3 +19,11 @@ export const postRefreshToken = (body) => {
 export const getActivateAcount = (uidb64, token) => {
   return authAPI.get(`activate/${uidb64}/${token}`);
 };
+
+export const postChangePasswordEmail = (body) => {
+  return authAPI.post(`change-password/`, body);
+};
+
+export const postChangePassword = (uidb64, token, body) => {
+  return authAPI.post(`change-password/${uidb64}/${token}`, body);
+};

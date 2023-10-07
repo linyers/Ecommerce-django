@@ -5,7 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework import pagination
+from django.utils.text import slugify
 import re
+import uuid
 
 from .models import Product, ProductImage, Category
 from .serializers import ProductSerializer, CategorySerializer
@@ -35,7 +37,7 @@ class ProductViewSet(CustomViewSet):
             return super().get_queryset()
         
         DICT_QUERYS = {
-            'title__startswith': '',
+            'title__contains': '',
             'category': '',
             'trending': '',
             'rating': '',
@@ -50,6 +52,20 @@ class ProductViewSet(CustomViewSet):
         data = {k: params.get(k) for k in DICT_QUERYS.keys() if params.get(k)}
 
         return Product.objects.filter(**data)
+
+
+class FiltersProducts(APIView):
+    def get(self, request):
+        query = self.request.query_params.get('title')
+        discounts = Product.objects.values_list('discount', flat=True).filter(discount__isnull=False, title__contains=query)
+        discounts = list(set([dis for dis in discounts if str(dis).endswith('0') or dis == 5]))
+        print(discounts)
+
+        # prices = Product.objects.values_list('price', flat=True).filter(title__startswith=query)
+        # price_mean = sum(prices) / len(prices)
+
+        data = {'discounts': sorted(discounts), 'price_mean': None}
+        return Response(data)
 
 
 class SearchProductView(APIView):
@@ -82,10 +98,13 @@ def create_products(request):
     data = request.data
     products = []
     for d in data:
+        id = str(uuid.uuid4())
+        title = d['title'].replace(' ', '-')
+        slug = slugify(f'{id[:8]}-{title}')
         d.pop('images')
         category_data = d.pop('category')
         category = Category.objects.get(name=category_data)
-        product = Product(author=user, category=category, **d)
+        product = Product(author=user, category=category, slug=slug, **d)
         products.append(product)
     Product.objects.bulk_create(products)
     return Response({'success': 'created products'})
@@ -94,7 +113,6 @@ def create_products(request):
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
 def create_products_images(request):
-    user = request.user
     data = request.data
     images_data = data.pop('images')
     pattern = r'[a-zA-Z0-9_-]+'

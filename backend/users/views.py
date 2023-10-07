@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from django.conf import settings
 
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
@@ -15,7 +16,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .permissions import IsOwnerOrAdmin
 from .models import Address
 from .serializers import UserSerializer, AddressSerializer, MyTokenObtainPairSerializer, SignupSerializer, ChangePasswordEmailSerializer, ChangePasswordSerializer
-from .utils import account_activation_token, send_email
+from .utils import account_activation_token, password_reset_token, send_email
 
 
 class UserView(APIView):
@@ -101,13 +102,13 @@ def get_user_with_token(uidb64):
 def activate(request, uidb64, token):
     user = get_user_with_token(uidb64)
 
-    if user and account_activation_token.check_token(user, token):
+    if user and not user.is_active and password_reset_token.check_token(user, token):
         user.is_active = True
         user.save()
 
-        return JsonResponse({"Success": "Thank you for your email confirmation. Now you can login your account."})
+        return JsonResponse({"Success": "Thank you for your email confirmation. Now you can login your account."}, status=200)
     else:
-        return JsonResponse({"Error": "Activation link is invalid!"})
+        return JsonResponse({"Error": "Activation link is invalid!"}, status=404)
 
 
 class ChangePasswordEmailView(CreateAPIView):
@@ -128,9 +129,10 @@ class ChangePasswordEmailView(CreateAPIView):
 
         subject='Change your password'
         msg='change your password:'
-        view='users:change_password'
+        view='change-password'
+        client_url = settings.CLIENT_URL
 
-        send_email_confirm = send_email(request, user, email, subject=subject, msg=msg, view=view)
+        send_email_confirm = send_email(client_url, user, user.email, subject=subject, msg=msg, view=view)
         if send_email_confirm:
             raise ValidationError({'Email': f'Problem sending email to {email}, check if you typed correctly.'})
 
@@ -144,7 +146,7 @@ class ChangePasswordView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         user = get_user_with_token(kwargs['uidb64'])
 
-        if user and account_activation_token.check_token(user, kwargs['token']):
+        if user and password_reset_token.check_token(user, kwargs['token']):
             serializer = self.serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
 
@@ -153,4 +155,4 @@ class ChangePasswordView(CreateAPIView):
 
             return JsonResponse({"Success": "Password changed!. Now you can login your account."})
         else:
-            return JsonResponse({"Error": "Activation link is invalid!"})
+            return JsonResponse({"Error": "Activation link is invalid!"}, status=404)

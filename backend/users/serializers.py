@@ -52,7 +52,7 @@ class SignupSerializer(serializers.ModelSerializer):
         
         subject='Activate your user account.'
         msg='confirm your registration:'
-        view='users:activate'
+        view='activate'
         client_url = settings.CLIENT_URL
 
         send_email_confirm = send_email(client_url, user, user.email, subject=subject, msg=msg, view=view)

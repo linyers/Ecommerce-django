@@ -10,6 +10,14 @@ export const getProducts = (query) => {
     : productsAPI.get(`products/`);
 };
 
+export const getOneProduct = (slug) => {
+  return productsAPI.get(`products/${slug}`)
+};
+
+export const getProductsFilters = (title) => {
+  return productsAPI.get(`filters-products/?title=${title}`)
+};
+
 export const getProductsSearch = (title) => {
   return productsAPI.get(`search-products/?title=${title}`)
 };

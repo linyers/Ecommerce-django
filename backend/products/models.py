@@ -36,7 +36,7 @@ class Product(models.Model):
     description = models.TextField()
     category = models.ForeignKey(Category, related_name="products", on_delete=models.CASCADE)
     price = models.FloatField()
-    discount = models.FloatField(validators=[MinValueValidator(1),  MaxValueValidator(100)], blank=True, null=True)
+    discount = models.IntegerField(validators=[MinValueValidator(1),  MaxValueValidator(100)], blank=True, null=True)
     stock = models.IntegerField(default=1)
     sold = models.IntegerField(default=0)
     trending = models.BooleanField(default=False)

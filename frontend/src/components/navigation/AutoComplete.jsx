@@ -15,7 +15,7 @@ export default function AutoComplete({
               <li
                 key={i}
                 onClick={() => handleSelection(t)}
-                className={`z-50 text-base p-1 ${
+                className={`z-50 autocomplete text-base p-1 ${
                   i === titles.length - 1 && "rounded-b-md"
                 } hover:text-white hover:bg-blue-500 ${
                   i === selectedItem && "text-white bg-blue-500"

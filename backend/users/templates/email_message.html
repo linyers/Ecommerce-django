@@ -1,7 +1,7 @@
 {% autoescape off %}
-Hi {{ user.email }},
+Hi {{ email }},
 
 Please click on the link below to {{ msg }}
 
-{{ client_url }}activate/{{ uid }}/{{ token }}
+{{ client_url }}{{ view }}/{{ uid }}/{{ token }}
 {% endautoescape %}
