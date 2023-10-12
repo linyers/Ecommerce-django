@@ -13,12 +13,14 @@ export default function FormErrors({ errors }) {
             <React.Fragment key={i}>
               {Array.isArray(errors[err]) ? (
                 errors[err].map((e, i) => {
-                  <li
-                    className="bg-red-600 text-gray-100 p-2 rounded-md"
-                    key={i}
-                  >
-                    {e}
-                  </li>;
+                  return (
+                    <li
+                      className="bg-red-600 text-gray-100 p-2 rounded-md"
+                      key={i}
+                    >
+                      {e}
+                    </li>
+                  );
                 })
               ) : (
                 <li className="bg-red-600 text-gray-100 p-2 rounded-md" key={i}>

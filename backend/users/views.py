@@ -102,7 +102,7 @@ def get_user_with_token(uidb64):
 def activate(request, uidb64, token):
     user = get_user_with_token(uidb64)
 
-    if user and not user.is_active and password_reset_token.check_token(user, token):
+    if user and not user.is_active and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
 

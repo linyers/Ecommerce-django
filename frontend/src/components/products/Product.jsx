@@ -1,13 +1,17 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import CartContext from '../../context/CartContext'
 import { getOneProduct } from "../../utils/products.api";
-import ModalStock from './ModalStock'
+import ModalStock from "./ModalStock";
 
 export default function Product({ slug }) {
   const [product, setProduct] = useState({});
+  const [unity, setUnity] = useState(1);
   const [imageIdx, setImageIdx] = useState(null);
-  
+  const { addItem } = useContext(CartContext)
+  const beforePrice = Math.trunc(product.price / (1 - product.discount / 100));
+
   useEffect(() => {
     const getProduct = async () => {
       const response = await getOneProduct(slug);
@@ -17,6 +21,15 @@ export default function Product({ slug }) {
     };
     getProduct();
   }, []);
+
+  const handleAddItemCart = async (e, id, quantity) => {
+    e.preventDefault();
+    const body = {
+      product_id: id,
+      product_quantity: quantity,
+    }
+    const response = await addItem(body)
+  }
 
   return (
     <main className="flex flex-row bg-white mx-16 my-10 p-5 ring-1 ring-gray-300 rounded-sm shadow-xl">
@@ -61,13 +74,16 @@ export default function Product({ slug }) {
             <FontAwesomeIcon icon={faHeart} />
           </a>
         </div>
+        <span className="line-through text-gray-500">
+          <span className="text-gray-400 font-normal">$ {beforePrice}</span>
+        </span>
         <span className="text-3xl">$ {product.price}</span>
-        <ModalStock stock={product.stock} />
+        <ModalStock stock={product.stock} unity={unity} setUnity={setUnity} />
         <form action="" className="flex flex-col gap-2 mt-10">
           <button className="py-3 bg-blue-500 text-white hover:bg-blue-600 transition-all duration-200 ease-in hover:border-0 border-0">
             Comprar ahora
           </button>
-          <button className="py-3 bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all duration-200 ease-in hover:border-0 border-0">
+          <button onClick={(e) => handleAddItemCart(e, product.id, unity)} className="py-3 bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all duration-200 ease-in hover:border-0 border-0">
             Agregar al carrito
           </button>
         </form>

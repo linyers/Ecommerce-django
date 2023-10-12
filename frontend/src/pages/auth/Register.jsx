@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import Loader from "../../components/parts/Loader";
-import FormErrors from "../../components/parts/FormErrors";
+import FormErrors from "../../components/auth/FormErrors";
 import AuthContext from "../../context/AuthContext";
 
 function Register() {
@@ -25,6 +25,7 @@ function Register() {
     );
     setLoad(false);
     setError(err);
+    notify();
   };
 
   return (

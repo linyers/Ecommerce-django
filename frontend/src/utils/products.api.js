@@ -14,6 +14,7 @@ export const getOneProduct = (slug) => {
   return productsAPI.get(`products/${slug}`)
 };
 
+// For discounts, prices and categories filters sidebar left
 export const getProductsFilters = (title) => {
   return productsAPI.get(`filters-products/?title=${title}`)
 };

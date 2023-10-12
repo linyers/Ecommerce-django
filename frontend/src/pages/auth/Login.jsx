@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import FormErrors from "../../components/parts/FormErrors";
+import { Toaster } from "react-hot-toast";
+import FormErrors from "../../components/auth/FormErrors";
 import Loader from "../../components/parts/Loader";
 import AuthContext from "../../context/AuthContext";
 
@@ -79,6 +80,7 @@ function LoginPage() {
           ?
         </p>
       </div>
+      <Toaster />
     </div>
   );
 }

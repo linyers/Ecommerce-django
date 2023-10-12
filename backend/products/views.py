@@ -37,19 +37,19 @@ class ProductViewSet(CustomViewSet):
             return super().get_queryset()
         
         DICT_QUERYS = {
-            'title__contains': '',
-            'category': '',
+            'title': 'title__contains',
+            'discount': 'discount__gte',
+            'category': 'category',
             'trending': '',
             'rating': '',
             'sold': '',
-            'discount': ''
         }
 
         for k in DICT_QUERYS.keys():
             if params.get(k) == 'Slick':
                 return Product.objects.filter(trending=True).order_by('-stock') if k == 'trending' else Product.objects.order_by(f'-{k}')
 
-        data = {k: params.get(k) for k in DICT_QUERYS.keys() if params.get(k)}
+        data = {DICT_QUERYS[k]: params.get(k) for k in DICT_QUERYS.keys() if params.get(k)}
 
         return Product.objects.filter(**data)
 
@@ -59,7 +59,6 @@ class FiltersProducts(APIView):
         query = self.request.query_params.get('title')
         discounts = Product.objects.values_list('discount', flat=True).filter(discount__isnull=False, title__contains=query)
         discounts = list(set([dis for dis in discounts if str(dis).endswith('0') or dis == 5]))
-        print(discounts)
 
         # prices = Product.objects.values_list('price', flat=True).filter(title__startswith=query)
         # price_mean = sum(prices) / len(prices)

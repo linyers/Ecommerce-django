@@ -1,7 +1,7 @@
 import {useState, useContext} from 'react'
 import AuthContext from '../../context/AuthContext'
 import Loader from '../../components/parts/Loader'
-import FormErrors from '../../components/parts/FormErrors'
+import FormErrors from '../../components/auth/FormErrors'
 
 function ChangePasswordEmail() {
   let { changePasswordEmail } = useContext(AuthContext);

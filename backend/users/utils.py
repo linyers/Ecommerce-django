@@ -8,7 +8,6 @@ import six
 
 
 def send_email(client_url, user, to_email, **kwargs):
-    print('view: ',kwargs['view'] == 'activate')
     mail_subject = kwargs['subject']
     message = render_to_string('email_message.html', {
         'email': user.email,

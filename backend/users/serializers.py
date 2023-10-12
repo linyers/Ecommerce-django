@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -21,6 +22,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         if user.is_active:
             token = super().get_token(user)
             token['username'] = user.username
+            token['email'] = user.email
+            token['pic'] = str(user.pic)
             return token
         raise serializers.ValidationError({'Email Confirm': 'Please confirm your email address. Note: Check spam!'}) 
 
@@ -93,6 +96,13 @@ class UserSerializer(serializers.ModelSerializer):
     dni = serializers.CharField(validators=[dni_validator], required=False)
     phone = serializers.CharField(validators=[phone_validator], required=False)
     address = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    def validate(self, attrs):
+        first_name = attrs.get('first_name') if attrs.get('first_name') else False
+        last_name = attrs.get('last_name') if attrs.get('last_name') else False
+        if first_name and not last_name or not first_name and last_name:
+            raise serializers.ValidationError({'names': 'Must be a update a two fields.'})
+        return super().validate(attrs)
 
     class Meta:
         model = User

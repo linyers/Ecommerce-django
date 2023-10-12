@@ -80,7 +80,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address', null=True)
     street_address = models.CharField(max_length=100)
-    apartment_address = models.CharField(max_length=100)
+    apartment_address = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=300, choices=Countries.choices)
     city = models.CharField(max_length=300)
     zip = models.CharField(max_length=100)

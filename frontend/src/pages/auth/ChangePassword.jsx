@@ -1,11 +1,11 @@
-import {useState, useContext} from 'react'
-import { useParams } from 'react-router-dom'
-import Loader from '../../components/parts/Loader'
-import AuthContext from '../../context/AuthContext'
-import FormErrors from '../../components/parts/FormErrors'
+import { useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import Loader from "../../components/parts/Loader";
+import AuthContext from "../../context/AuthContext";
+import FormErrors from "../../components/auth/FormErrors";
 
 function ChangePassword() {
-  const params = useParams()
+  const params = useParams();
   const { changePassword } = useContext(AuthContext);
   const [newPassword, setNewPassword] = useState("");
   const [repeatNewPassword, setRepeatNewPassword] = useState("");
@@ -14,7 +14,13 @@ function ChangePassword() {
 
   const handleSubmit = async (e) => {
     setLoad(true);
-    const err = await changePassword(e, newPassword, repeatNewPassword, params.uid, params.token);
+    const err = await changePassword(
+      e,
+      newPassword,
+      repeatNewPassword,
+      params.uid,
+      params.token
+    );
     setError(err);
     setLoad(false);
   };
@@ -39,7 +45,8 @@ function ChangePassword() {
           />
           <input
             className={`py-2 px-3 ring-1 outline-blue-500 ring-gray-500 rounded-sm ${
-              error["repeat_new_password"] && "ring-2 ring-red-600 outline-red-600"
+              error["repeat_new_password"] &&
+              "ring-2 ring-red-600 outline-red-600"
             }`}
             type="password"
             name="repeatNewPassword"
@@ -52,7 +59,9 @@ function ChangePassword() {
 
           <button
             className="bg-gray-600 hover:bg-gray-500 disabled:cursor-default disabled:bg-gray-500/50 focus:outline-gray-800 hover:cursor-pointer rounded-md p-3 text-white"
-            disabled={newPassword !== repeatNewPassword || newPassword.length < 8}
+            disabled={
+              newPassword !== repeatNewPassword || newPassword.length < 8
+            }
             type="submit"
           >
             {load ? <Loader /> : "Enviar"}
@@ -63,4 +72,4 @@ function ChangePassword() {
   );
 }
 
-export default ChangePassword
+export default ChangePassword;

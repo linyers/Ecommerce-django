@@ -21,15 +21,19 @@ class GetCartItemsView(APIView):
             for item in cart_items:
                 product = Product.objects.get(id=item.product.id)
                 price += product.price * item.count
+                total_price_item = product.price * item.count
                 product = ProductSerializer(product)
+
 
                 data.append(
                     {
                         'id': item.id,
                         'product': product.data,
                         'count': item.count,
+                        'total_price_item': total_price_item
                     }
                 )
+
         return Response({'cart': data, 'total_items': cart.total_items, 'total_price': price}, status=status.HTTP_200_OK)
 
 

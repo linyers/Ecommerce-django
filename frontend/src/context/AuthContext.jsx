@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   postSignup,
   postLogin,
@@ -8,6 +9,8 @@ import {
   getActivateAcount,
   postChangePasswordEmail,
   postChangePassword,
+  getUser,
+  putUser,
 } from "../utils/auth.api";
 
 const AuthContext = createContext();
@@ -26,6 +29,7 @@ export function AuthProvider({ children }) {
       : null
   );
   const [loading, setLoading] = useState(true);
+  const [pic, setPic] = useState(user?.pic ? `http://127.0.0.1:8000/media/${user.pic}` : "/user.png");
 
   const navigate = useNavigate();
 
@@ -33,7 +37,7 @@ export function AuthProvider({ children }) {
     if (loading) {
       updateToken();
     }
-
+    
     const REFRESH_INTERVAL = 1000 * 60 * 4;
     let interval = setInterval(() => {
       if (authTokens) {
@@ -41,7 +45,7 @@ export function AuthProvider({ children }) {
       }
     }, REFRESH_INTERVAL);
     return () => clearInterval(interval);
-  }, [authTokens, loading]);
+  }, [authTokens, loading, pic]);
 
   const registerUser = async (e, email, username, password, repeatPassword) => {
     e.preventDefault();
@@ -55,7 +59,12 @@ export function AuthProvider({ children }) {
     } catch (err) {
       return err.response.data;
     }
-
+    toast.success(
+      "Registrado Correctamente!. Chequea tu email para activarlo.",
+      {
+        duration: 6000,
+      }
+    );
     navigate("/");
   };
 
@@ -75,7 +84,9 @@ export function AuthProvider({ children }) {
         setUser(jwtDecode(data.access));
         navigate("/");
       } else {
-        alert("Something went wrong while logging in the user!");
+        toast.error(
+          "Algo salio mal al ingresar, intentalo nuevamente.",
+        );
       }
     } catch (err) {
       return err.response.data;
@@ -85,6 +96,7 @@ export function AuthProvider({ children }) {
   const logoutUser = (e) => {
     e.preventDefault();
     localStorage.removeItem("authTokens");
+    localStorage.removeItem("cart")
     setAuthTokens(null);
     setUser(null);
     navigate("/");
@@ -126,32 +138,67 @@ export function AuthProvider({ children }) {
     } catch (err) {
       return err.response.data;
     }
+    toast.success(
+      "Chequea tu email para poder cambiar tu contraseña!.",
+      {
+        duration: 6000,
+      }
+    );
     navigate("/");
-  }
+  };
 
-  const changePassword = async (e, newPassword, repeatNewPassword, uid, token) => {
+  const changePassword = async (
+    e,
+    newPassword,
+    repeatNewPassword,
+    uid,
+    token
+  ) => {
     e.preventDefault();
     try {
       const response = await postChangePassword(uid, token, {
         new_password: newPassword,
         repeat_new_password: repeatNewPassword,
-      })
+      });
     } catch (err) {
       if (err.response.status === 404) {
         const redirectHome = setTimeout(() => {
-          navigate("/")
+          navigate("/");
         }, 2000);
-        
-        return {Error: 'Link invalido, Redireccionando al home'}
+
+        return { Error: "Link invalido, Redireccionando al home" };
       }
       return err.response.data;
     }
+    toast.success(
+      "Tu contraseña fue actualizada!. Ahora puedes ingresar.",
+    );
     navigate("/login");
+  };
+
+  const userInfo = async () => {
+    const response = await getUser(authTokens.access)
+    return response.data
+  }
+
+  const updateUser = async (body) => {
+    try {
+      const response = await putUser(authTokens.access, body);
+      const image = response.data.pic
+      setPic(image ? `http://127.0.0.1:8000${image}` : "/user.png");
+      return response
+    } catch (err) {
+      return err.response;
+    }
   }
 
   const contextData = {
     user,
+    pic,
+    setPic,
     authTokens,
+    userInfo,
+    updateUser,
     loginUser,
     logoutUser,
     registerUser,

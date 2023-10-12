@@ -27,3 +27,20 @@ export const postChangePasswordEmail = (body) => {
 export const postChangePassword = (uidb64, token, body) => {
   return authAPI.post(`change-password/${uidb64}/${token}`, body);
 };
+
+export const getUser = (authToken) => {
+  return authAPI.get("user/", {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+};
+
+export const putUser = (authToken, body) => {
+  return authAPI.put("user/", body, {
+    headers: {
+      "content-type": "multipart/form-data",
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+};
