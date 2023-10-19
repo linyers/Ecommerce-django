@@ -7,7 +7,7 @@ export default function CartPage() {
   const { cart } = useContext(CartContext);
   return (
     <main className="bg-gray-600 flex flex-row gap-5 px-8 pr-16 p-10">
-      {cart?.total_items !== 0 ? (
+      {cart && cart?.total_items !== 0 ? (
         <>
           <div className="md:w-3/4 w-full flex flex-col gap-3">
             {cart.cart?.map((c, i) => {
@@ -44,10 +44,10 @@ export default function CartPage() {
                   <span>$ {cart.total_price}</span>
                 </li>
               </ul>
-              <div className="px-8">
-                <button className="mb-3 w-full bg-blue-500 hover:bg-blue-400 text-white">
+              <div className="px-8 flex text-center">
+                <Link to={'/buying/'} className="mb-3 w-full p-3 rounded-lg bg-blue-500 text-white hover:bg-blue-400 hover:text-white duration-200 transition-all">
                   Proceder a la compra
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -71,7 +71,7 @@ export default function CartPage() {
               <div className="px-8 py-5 text-gray-400">
                 <span>
                   Aqui veras el resumen de lo que vayas a comprar cuando tengas
-                  productos en el carrito
+                  productos en el carrito.
                 </span>
               </div>
             </div>

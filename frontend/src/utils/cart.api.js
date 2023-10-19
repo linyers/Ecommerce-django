@@ -20,8 +20,8 @@ export const postItem = (authToken, body) => {
   });
 };
 
-export const putItem = (authToken, id) => {
-  return addressAPI.put("update-item/", {
+export const putItem = (authToken, body) => {
+  return addressAPI.put("update-item/", body, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },

@@ -15,20 +15,19 @@ export default CartContext;
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
-    localStorage.getItem("cart") ? localStorage.getItem("cart") : null;
+    localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : null;
   });
   const [change, setChange] = useState(false);
-  const { authTokens } = useContext(AuthContext);
-
+  const authTokens = JSON.parse(localStorage.getItem("authTokens"));
+  
   useEffect(() => {
-    console.log(cart);
     setChange(false);
     cartItems()
   }, [change]);
 
   const cartItems = async () => {
     const response = await getItems(authTokens.access);
-    localStorage.setItem("cart", response.data);
+    localStorage.setItem("cart", JSON.stringify(response.data));
     setCart(response.data);
     return response;
   };
@@ -69,7 +68,6 @@ export function CartProvider({ children }) {
   const empityCart = async () => {
     try {
       const response = await deleteCart(authTokens.access);
-      toast.success("Carrito vacio");
       setChange(true);
       return response;
     } catch (error) {

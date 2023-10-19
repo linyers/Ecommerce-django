@@ -100,7 +100,7 @@ export default function ModalUserForm({ setOpen, user }) {
             className={`py-2 px-2 ring-1 outline-blue-500 ring-gray-500 rounded-sm ${
               error["dni"] && "ring-2 ring-red-600 outline-red-600"
             }`}
-            type="text"
+            type="number"
             placeholder={dni ? user.dni : "DNI"}
             onChange={(e) => {
               if (e.target.value === "" && user.dni !== null) {
@@ -115,7 +115,7 @@ export default function ModalUserForm({ setOpen, user }) {
             className={`py-2 px-2 ring-1 outline-blue-500 ring-gray-500 rounded-sm ${
               error["phone"] && "ring-2 ring-red-600 outline-red-600"
             }`}
-            type="tel"
+            type="number"
             placeholder={phone ? user.phone : "Telefono"}
             onChange={(e) => {
               if (e.target.value === "" && user.phone !== null) {

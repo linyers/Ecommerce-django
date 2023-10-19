@@ -8,7 +8,7 @@ import uuid
 User = get_user_model()
 
 
-class PucharseManager(models.Manager):
+class purchaseManager(models.Manager):
     def bulk_create(self, objs, **kwargs) -> list:
         a = super(models.Manager,self).bulk_create(objs,**kwargs)
         for i in objs:
@@ -21,25 +21,22 @@ class PucharseManager(models.Manager):
         start_date = timezone.now() - timedelta(days=7)
         start_date = start_date.strftime("%Y-%m-%d")
 
-        return self.filter(pucharse_date__range=[start_date, today])
+        return self.filter(purchase_date__range=[start_date, today])
 
 
 class OrderManager(models.Manager):
     def waiting_shipping(self):
-        return self.filter(shipping=None).filter(with_shipping=True).filter(order_status='confirm')
+        return self.filter(shipping=None).filter(order_status='confirm')
 
 
 ORDER_STATUS_CHOICES = (
-    ('pending', 'Pending'),
-    ('cancelled', 'Cancelled'),
-    ('confirm', 'Confirm'),
     ('on_the_way', 'On the way'),
     ('delivered', 'Delivered'),
     ('refunded', 'Refunded'),
 )
 
 class Order(models.Model):
-    costumer = models.ForeignKey(User, related_name='order',on_delete=models.CASCADE)
+    costumer = models.ForeignKey(User, related_name='order', on_delete=models.CASCADE)
     order_code = models.CharField(max_length=8, unique=True)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True, blank=True)
@@ -53,16 +50,16 @@ class Order(models.Model):
     objects = OrderManager()
 
     def total_price(self):
-        return sum([pucharse.get_final_price() for pucharse in self.pucharse.all()])
+        return sum([purchase.get_final_price() for purchase in self.purchase.all()])
 
 
-class Pucharse(models.Model):
+class Purchase(models.Model):
     quantity = models.IntegerField()
-    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='pucharse')
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='pucharses', null=True)
-    pucharse_date = models.DateField(auto_now_add=True)
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='purchase')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='purchases', null=True)
+    purchase_date = models.DateField(auto_now_add=True)
 
-    objects = PucharseManager()
+    objects = purchaseManager()
 
     def __str__(self):
         return f'{self.quantity} of {self.product.title}'
@@ -90,12 +87,10 @@ class Refund(models.Model):
 
 
 class Shipping(models.Model):
-    deliverer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shipping')
     end_shipping = models.DateTimeField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
-
-    def __str__(self):
-        return self.deliverer.first_name + " " + self.deliverer.last_name
+    # name = models.CharField(max_length=100, null=True, blank=True)
+    # deliverer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shipping')
 
 
 def set_order_code(sender, instance, *args, **kwargs):
@@ -117,8 +112,8 @@ def set_stock(sender, instance, *args, **kwargs):
 
 
 def set_trending(sender, instance, *args, **kwargs):
-    pucharse = Pucharse.objects.range_week_date().filter(product__id=instance.product.id)
-    sold = sum([p.quantity for p in pucharse])
+    purchase = Purchase.objects.range_week_date().filter(product__id=instance.product.id)
+    sold = sum([p.quantity for p in purchase])
     if sold > 100:
         instance.product.trending = True
         instance.product.save()
@@ -130,5 +125,5 @@ def set_trending(sender, instance, *args, **kwargs):
 
 pre_save.connect(set_order_code, sender=Order)
 pre_save.connect(set_order_end_date, sender=Order)
-post_save.connect(set_stock, sender=Pucharse)
-post_save.connect(set_trending, sender=Pucharse)
+post_save.connect(set_stock, sender=Purchase)
+post_save.connect(set_trending, sender=Purchase)

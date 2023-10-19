@@ -59,11 +59,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=17, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
-    is_deliverer = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
+    # is_deliverer = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -78,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address', null=True, blank=True)
     street_address = models.CharField(max_length=100)
     apartment_address = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=300, choices=Countries.choices)
@@ -87,4 +87,4 @@ class Address(models.Model):
     default = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.email
+        return f'{self.user.email} {self.street_address}, {self.city}, {self.country}' if self.user else f'Delivery Address {self.street_address}, {self.city}, {self.country}'

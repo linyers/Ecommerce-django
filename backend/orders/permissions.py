@@ -6,6 +6,4 @@ class IsOwnerOrDeliverer(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         
-        if not obj.shipping and request.user.is_deliverer:
-            return True
-        return obj.costumer == request.user or obj.shipping.deliverer == request.user  or request.user.is_superuser
+        return obj.costumer == request.user or request.user.is_superuser

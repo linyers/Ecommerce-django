@@ -13,7 +13,6 @@ import CartPage from "./pages/CartPage";
 
 import Header from "./components/navigation/Header";
 import Footer from "./components/navigation/Footer";
-import PrivateRoutes from "./utils/PrivateRoutes";
 
 import ScrollToTop from "./utils/ScrollToTop";
 
@@ -22,6 +21,9 @@ import "./App.css";
 import { AuthProvider } from "./context/AuthContext";
 import { AddressProvider } from "./context/AddressContext";
 import { CartProvider } from "./context/CartContext";
+import { OrdersProvider } from "./context/OrdersContext";
+import BuyingPage from "./pages/buying/BuyingPage";
+import PurchasesPage from "./pages/PurchasesPage";
 
 function App() {
   return (
@@ -31,27 +33,31 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <AddressProvider>
-              <Toaster />
-              <Header />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/activate/:uid/:token" element={<Activate />} />
-                <Route
-                  path="/change-password"
-                  element={<ChangePasswordEmail />}
-                />
-                <Route
-                  path="/change-password/:uid/:token"
-                  element={<ChangePassword />}
-                />
-                <Route path="/user-dashboard" element={<UserDashboard />} />
-                <Route path="/s" element={<ProductsPage />} />
-                <Route path="/:slug" element={<ProductsPage />} />
-                <Route path="/cart" element={<CartPage />} />
-              </Routes>
-              <Footer />
+              <OrdersProvider>
+                <Toaster />
+                <Header />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/activate/:uid/:token" element={<Activate />} />
+                  <Route
+                    path="/change-password"
+                    element={<ChangePasswordEmail />}
+                  />
+                  <Route
+                    path="/change-password/:uid/:token"
+                    element={<ChangePassword />}
+                  />
+                  <Route path="/user-dashboard" element={<UserDashboard />} />
+                  <Route path="/s" element={<ProductsPage />} />
+                  <Route path="/:slug" element={<ProductsPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/buying/" element={<BuyingPage />} />
+                  <Route path="/my-purchases" element={<PurchasesPage />}/>
+                </Routes>
+                <Footer />
+              </OrdersProvider>
             </AddressProvider>
           </CartProvider>
         </AuthProvider>

@@ -1,14 +1,18 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import CartContext from '../../context/CartContext'
+import AuthContext from '../../context/AuthContext'
 import { getOneProduct } from "../../utils/products.api";
 import ModalStock from "./ModalStock";
 
 export default function Product({ slug }) {
+  const navigate = useNavigate();
   const [product, setProduct] = useState({});
   const [unity, setUnity] = useState(1);
   const [imageIdx, setImageIdx] = useState(null);
+  const { user } = useContext(AuthContext)
   const { addItem } = useContext(CartContext)
   const beforePrice = Math.trunc(product.price / (1 - product.discount / 100));
 
@@ -22,13 +26,31 @@ export default function Product({ slug }) {
     getProduct();
   }, []);
 
-  const handleAddItemCart = async (e, id, quantity) => {
+  const handlePurchaseNow = async (e, id, quantity) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
     e.preventDefault();
     const body = {
       product_id: id,
       product_quantity: quantity,
     }
-    const response = await addItem(body)
+    await addItem(body)
+    navigate("/buying/")
+  }
+
+  const handleAddItemCart = async (e, id, quantity) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    e.preventDefault();
+    const body = {
+      product_id: id,
+      product_quantity: quantity,
+    }
+    await addItem(body)
   }
 
   return (
@@ -80,7 +102,7 @@ export default function Product({ slug }) {
         <span className="text-3xl">$ {product.price}</span>
         <ModalStock stock={product.stock} unity={unity} setUnity={setUnity} />
         <form action="" className="flex flex-col gap-2 mt-10">
-          <button className="py-3 bg-blue-500 text-white hover:bg-blue-600 transition-all duration-200 ease-in hover:border-0 border-0">
+          <button onClick={(e) => handlePurchaseNow(e, product.id, unity)} className="py-3 bg-blue-500 text-white hover:bg-blue-600 transition-all duration-200 ease-in hover:border-0 border-0">
             Comprar ahora
           </button>
           <button onClick={(e) => handleAddItemCart(e, product.id, unity)} className="py-3 bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all duration-200 ease-in hover:border-0 border-0">

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, Pucharse, Refund, Shipping
+from .models import Order, Purchase, Refund, Shipping
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -7,6 +7,6 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Pucharse)
+admin.site.register(Purchase)
 admin.site.register(Refund)
 admin.site.register(Shipping)

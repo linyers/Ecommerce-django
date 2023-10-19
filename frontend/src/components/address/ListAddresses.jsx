@@ -23,9 +23,9 @@ export default function ListAddresses({ setDeleted, addresses }) {
         className="flex md:flex-row flex-col items-start gap-10 justify-between"
       >
         <div className="flex">
-          <span className="w-14 font-semibold">Dir. {i + 1}:</span>
-          <span className="text-gray-500">
-            {a.street_address}, Piso {a.apartment_address}, {a.city} {a.country}
+          <span className={`w-1/6 font-semibold ${a.default && 'text-blue-500'}`}>Dir. {i + 1}:</span>
+          <span className="w-5/6 text-gray-500">
+            {a.street_address}, {a.appartment_address && `Piso ${a.apartment_address}, `} {a.city} {a.country}
             , CP: {a.zip}.
           </span>
         </div>

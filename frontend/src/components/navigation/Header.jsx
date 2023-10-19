@@ -8,7 +8,7 @@ import SearchBar from "./SearchBar";
 
 function Header() {
   const { user, pic, logoutUser } = useContext(AuthContext);
-  const { cart } = useContext(CartContext);
+  // TODO const { cart } = useContext(CartContext);
 
   return (
     <header className="bg-gray-800 py-2 px-8 flex flex-row justify-between">
@@ -48,7 +48,7 @@ function Header() {
                 </a>
               </li>
               <li>
-                <Link to="/pucharses">Mis compras</Link>
+                <Link to="/my-purchases">Mis compras</Link>
               </li>
               <li>
                 <Link className="text-lg" to="/cart">

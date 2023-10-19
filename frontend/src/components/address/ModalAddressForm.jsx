@@ -12,6 +12,7 @@ export default function ModalAddressForm({ setOpen }) {
   const [country, setCountry] = useState(null);
   const [city, setCity] = useState(null);
   const [zip, setZip] = useState(null);
+  const [defaultAddress, setDefaultAddress] = useState([]);
 
   const closeModal = () => {
     setOpen(false);
@@ -26,6 +27,7 @@ export default function ModalAddressForm({ setOpen }) {
       country,
       city,
       zip,
+      default: defaultAddress,
     };
     const response = await createAddress(body);
     if (response.status === 201) {
@@ -62,9 +64,7 @@ export default function ModalAddressForm({ setOpen }) {
           onSubmit={handleSubmit}
           className="flex flex-col gap-5 p-4 mt-2 justify-center items-center"
         >
-          <h4 className="text-2xl font-semibold text-gray-700">
-            Direccion
-          </h4>
+          <h4 className="text-2xl font-semibold text-gray-700">Direccion</h4>
           <FormErrors errors={error} />
           <div className="flex gap-2">
             <input
@@ -126,6 +126,20 @@ export default function ModalAddressForm({ setOpen }) {
               setError({});
             }}
           />
+          <div className="p-2">
+            <input
+              className={`py-2 px-2 outline-blue-500 ring-gray-500 rounded-sm ${
+                error["default"] && "ring-2 ring-red-600 outline-red-600"
+              }`}
+              id="default_address"
+              type="checkbox"
+              onChange={(e) => {
+                setDefaultAddress(e.target.checked);
+                setError({});
+              }}
+            />
+            <label htmlFor="default_address" className="ml-2">Direccion por defecto.</label>
+          </div>
           <button
             className="bg-gray-600 hover:bg-gray-500 focus:outline-gray-800 hover:cursor-pointer rounded-md p-3 text-white"
             type="submit"

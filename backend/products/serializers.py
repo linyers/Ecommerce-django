@@ -10,7 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    author = serializers.StringRelatedField(read_only=True)
     category = serializers.CharField(max_length=150, required=True)
     images = serializers.StringRelatedField(many=True, read_only=True)
     uploaded_images = serializers.ListField(

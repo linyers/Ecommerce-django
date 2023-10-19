@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import jwtDecode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -12,6 +12,7 @@ import {
   getUser,
   putUser,
 } from "../utils/auth.api";
+import CartContext from './CartContext'
 
 const AuthContext = createContext();
 
