@@ -17,6 +17,7 @@ export default function ListAddresses({ setDeleted, addresses }) {
   };
 
   return addresses?.map((a, i) => {
+    console.log(a)
     return (
       <div
         key={i}
@@ -25,7 +26,7 @@ export default function ListAddresses({ setDeleted, addresses }) {
         <div className="flex">
           <span className={`w-1/6 font-semibold ${a.default && 'text-blue-500'}`}>Dir. {i + 1}:</span>
           <span className="w-5/6 text-gray-500">
-            {a.street_address}, {a.appartment_address && `Piso ${a.apartment_address}, `} {a.city} {a.country}
+            {a.street_address}, {a.appartment_address && `Piso ${a.appartment_address}, `} {a.city} {a.country}
             , CP: {a.zip}.
           </span>
         </div>

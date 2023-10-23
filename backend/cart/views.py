@@ -24,7 +24,6 @@ class GetCartItemsView(APIView):
                 total_price_item = product.price * item.count
                 product = ProductSerializer(product)
 
-
                 data.append(
                     {
                         'id': item.id,

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
@@ -25,14 +26,14 @@ function Footer() {
         <ul>
           <li className="text-white mb-4">Ayuda</li>
           <li>
-            <a className="text-gray-400 font-thin" href="">
+            <a className="text-gray-400 font-thin">
               Comprar
             </a>
           </li>
           <li>
-            <a className="text-gray-400 font-thin" href="">
+            <Link to={'/sell'} className="text-gray-400 font-thin">
               Vender
-            </a>
+            </Link>
           </li>
           <li>
             <a className="text-gray-400 font-thin" href="">

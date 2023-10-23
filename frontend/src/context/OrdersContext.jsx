@@ -3,6 +3,7 @@ import {
   getOrders,
   postOrders,
   putOrders,
+  postRefund,
 } from "../utils/orders.api";
 
 const OrdersContext = createContext();
@@ -27,20 +28,36 @@ export function OrdersProvider({ children }) {
     }
   };
 
-  const updateOrder = async (body) => {
+  const updateOrder = async (id, order_status) => {
     try {
-      const response = await putOrders(authTokens.access, body);
-      setChange(true);
+      const body = {
+        order_status,
+      }
+      const response = await putOrders(authTokens.access, body, id);
       return response;
     } catch (error) {
       return error.response;
     }
   };
 
+  const createRefundOrder = async (reason, order) => {
+    try {
+      const body = {
+        reason,
+        order,
+      };
+      const response = await postRefund(authTokens.access, body);
+      return response;
+    } catch (error) {
+      return error.response;
+    }
+  }
+
   const contextData = {
     ordersData,
     createOrder,
     updateOrder,
+    createRefundOrder,
   };
 
   return (

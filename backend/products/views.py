@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from rest_framework import pagination
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.utils.text import slugify
 import re
 import uuid
@@ -28,8 +28,10 @@ class ProductViewSet(CustomViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = ProductPagination
+    parser_classes = (MultiPartParser, FormParser)
     lookup_field = 'slug'
-    
+
+
     def get_queryset(self):
         params = self.request.query_params
 
@@ -40,6 +42,7 @@ class ProductViewSet(CustomViewSet):
             'title': 'title__contains',
             'discount': 'discount__gte',
             'category': 'category',
+            'author': 'author',
             'trending': '',
             'rating': '',
             'sold': '',
@@ -76,9 +79,8 @@ class SearchProductView(APIView):
 
 class CategoryView(APIView):
     def get(self, request, *args, **kwargs):
-        queryset = Category.objects.all()
-        serializer = CategorySerializer(queryset, many=True)
-        return Response(serializer.data)
+        queryset = Category.objects.values_list('name', flat=True)
+        return Response(queryset)
 
 
 @api_view(['POST'])

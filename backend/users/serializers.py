@@ -121,3 +121,8 @@ class AddressSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'zip': {'validators': [zip_validator]}
         }
+    
+    def validate(self, attrs):
+        if Address.objects.filter(user=self.context['request'].user, default=True).exists() and attrs.get('default'):
+            raise serializers.ValidationError({'default': 'You already have a default address.'})
+        return super().validate(attrs)

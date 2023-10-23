@@ -89,7 +89,7 @@ export default function ShippingPage({ setBody }) {
                   <p>
                     {address.street_address},{" "}
                     {address.appartment_address &&
-                      `Piso ${address.apartment_address}, `}{" "}
+                      `Piso ${address.appartment_address}, `}{" "}
                     {address.city}, {address.country}, CP: {address.zip}.
                   </p>
                 </div>

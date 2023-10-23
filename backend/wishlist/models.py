@@ -6,7 +6,6 @@ User = settings.AUTH_USER_MODEL
 
 class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    total = models.IntegerField(default=0)
 
 
 class WishlistProduct(models.Model):

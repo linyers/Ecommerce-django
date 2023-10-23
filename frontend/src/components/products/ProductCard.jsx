@@ -20,6 +20,7 @@ export default function Product({ p }) {
             <FontAwesomeIcon icon={faHeart} />
           </a>
           </div>
+          <span className="text-sm text-gray-400">{!p.used ? 'Nuevo' : 'Usado'}</span>
           <Link to={`/${p.slug}`} className="flex w-fit flex-col">
             {p.discount && (
               <span className="text-sm line-through text-gray-400">

@@ -32,6 +32,8 @@ class OrderManager(models.Manager):
 ORDER_STATUS_CHOICES = (
     ('on_the_way', 'On the way'),
     ('delivered', 'Delivered'),
+    ('pending_refund', 'Pending refund'),
+    ('refund_not_accepted', 'Refund not accepted'),
     ('refunded', 'Refunded'),
 )
 
@@ -77,10 +79,10 @@ class Purchase(models.Model):
 
 
 class Refund(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    costumer = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, related_name='refund', on_delete=models.CASCADE)
+    costumer = models.ForeignKey(User, related_name='refund', on_delete=models.CASCADE, null=True)
     reason = models.TextField()
-    accepted = models.BooleanField(default=False)
+    accepted = models.BooleanField(null=True, blank=True)
 
     def __str__(self):
         return f"refund of {self.order.order_code}"
@@ -102,7 +104,25 @@ def set_order_code(sender, instance, *args, **kwargs):
 
 def set_order_end_date(sender, instance, *args, **kwargs):
     if instance.order_status == 'delivered':
-        instance.end_date = timezone.now
+        instance.end_date = timezone.now()
+
+
+def set_refund_status(sender, instance, *args, **kwargs):
+    instance.order.order_status = 'pending_refund'
+    if instance.accepted == None:
+        instance.order.save()
+        return
+    if instance.accepted:
+        instance.order.order_status = 'refunded'
+        # TODO purchases = instance.order.purchases.all()
+        # for purchase in purchases:
+        #     purchase.product.stock += purchase.quantity
+        #     purchase.product.sold -= purchase.quantity
+        #     purchase.product.save()
+    else:
+        instance.order.order_status = 'refund_not_accepted'
+    print(instance.order.order_status)
+    instance.order.save()
 
 
 def set_stock(sender, instance, *args, **kwargs):
@@ -125,5 +145,6 @@ def set_trending(sender, instance, *args, **kwargs):
 
 pre_save.connect(set_order_code, sender=Order)
 pre_save.connect(set_order_end_date, sender=Order)
+pre_save.connect(set_refund_status, sender=Refund)
 post_save.connect(set_stock, sender=Purchase)
 post_save.connect(set_trending, sender=Purchase)

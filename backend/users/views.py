@@ -55,7 +55,7 @@ class AddressViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user = request.user
         data = {'user': user.pk, **request.data}
-        serializer = AddressSerializer(data=data)
+        serializer = AddressSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             data = serializer.data
             data['user'] = user

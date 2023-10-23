@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
 from django.db.models.signals import pre_save
@@ -36,9 +35,10 @@ class Product(models.Model):
     description = models.TextField()
     category = models.ForeignKey(Category, related_name="products", on_delete=models.CASCADE)
     price = models.FloatField()
-    discount = models.IntegerField(validators=[MinValueValidator(1),  MaxValueValidator(100)], blank=True, null=True)
+    discount = models.IntegerField(blank=True, null=True)
     stock = models.IntegerField(default=1)
     sold = models.IntegerField(default=0)
+    used = models.BooleanField(default=False)
     trending = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -62,7 +62,7 @@ class ProductImage(models.Model):
 
 
 def set_slug(sender, instance, *args, **kwargs):
-    if instance.slug:
+    if instance.slug.split('-', 1)[1] == str(instance.title).replace(' ', '-'):
         return
     
     id = str(uuid.uuid4())

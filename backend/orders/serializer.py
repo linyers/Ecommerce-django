@@ -61,7 +61,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'order_code': {'read_only': True},
             'costumer': {'read_only': True}
         }
-
+    
     def validate(self, attrs):
         purchases_data = attrs.get('purchases')
         for purchase in purchases_data:
@@ -87,20 +87,23 @@ class OrderSerializer(serializers.ModelSerializer):
 
         if len([p for p in purchases_data if p['product'].author == purchases_data[0]['product'].author]) == len(purchases_data) and not from_address_data:
             # If all products are from the same author and no address is provided, use the author's address
-            address = Address.objects.filter(user=purchases_data[0]['product'].author).first()
-            from_address = Address.objects.get(id=address.id)
+            from_address = Address.objects.get(user=purchases_data[0]['product'].author, default=True)
         else:
-            from_address = Address.objects.get(id=from_address_data)
-
+            # TODO: implement a way to obtain the closest email address to sellers
+            from_address = Address.objects.get(id=13)
+        
         to_address = Address.objects.get(id=to_address_data) if to_address_data else None
         shipping = Shipping.objects.create(**shipping_data) if shipping_data else None
 
         costumer = self.context['request'].user
 
+        payment = Payment.objects.create(user=costumer, **payment_data)
+
         order = Order.objects.create(costumer=costumer,
                                     from_address=from_address,
                                     to_address=to_address, 
                                     shipping=shipping,
+                                    payment=payment,
                                     order_status='on_the_way',
                                     **validated_data)
         purchases = list()
@@ -108,28 +111,17 @@ class OrderSerializer(serializers.ModelSerializer):
             purchases.append(Purchase(order=order, **purchase))
         Purchase.objects.bulk_create(purchases)
 
-        payment = Payment.objects.create(user=costumer, **payment_data)
-        order.payment = payment
-
         return order
 
-    def update(self, instance, validated_data):
-        user = self.context['request'].user
-        if user.is_deliverer:
-            from_address_data = validated_data.pop('from_address_upload')
-            from_address = Address.objects.get(id=from_address_data)
-            instance.from_address = from_address
 
-            shipping_data = validated_data.pop('shipping', None)
-            shipping = Shipping.objects.create(deliverer=user, **shipping_data)
-            instance.shipping = shipping
-        
-        instance.order_status = validated_data.pop('order_status')
-        instance.save()
-        return instance
+class OrderUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('order_status',)
 
 
 class RefundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Refund
         fields = '__all__'
+        extra_kwargs = {'costumer': {'read_only': True}}

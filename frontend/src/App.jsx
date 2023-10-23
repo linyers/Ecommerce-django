@@ -24,6 +24,7 @@ import { CartProvider } from "./context/CartContext";
 import { OrdersProvider } from "./context/OrdersContext";
 import BuyingPage from "./pages/buying/BuyingPage";
 import PurchasesPage from "./pages/PurchasesPage";
+import SellPage from "./pages/SellPage";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
                   <Route path="/cart" element={<CartPage />} />
                   <Route path="/buying/" element={<BuyingPage />} />
                   <Route path="/my-purchases" element={<PurchasesPage />}/>
+                  <Route path="/sell" element={<SellPage />}/>
                 </Routes>
                 <Footer />
               </OrdersProvider>
