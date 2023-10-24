@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const addressAPI = axios.create({
+const cartAPI = axios.create({
   baseURL: "http://localhost:8000/api/cart/",
 });
 
 export const getItems = (authToken) => {
-  return addressAPI.get("get-items/", {
+  return cartAPI.get("get-items/", {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -13,7 +13,7 @@ export const getItems = (authToken) => {
 };
 
 export const postItem = (authToken, body) => {
-  return addressAPI.post("add-item/", body, {
+  return cartAPI.post("add-item/", body, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -21,7 +21,7 @@ export const postItem = (authToken, body) => {
 };
 
 export const putItem = (authToken, body) => {
-  return addressAPI.put("update-item/", body, {
+  return cartAPI.put("update-item/", body, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -29,7 +29,7 @@ export const putItem = (authToken, body) => {
 };
 
 export const deleteItem = (authToken, body) => {
-  return addressAPI.delete("remove-item/", {
+  return cartAPI.delete("remove-item/", {
     data: body,
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -38,7 +38,7 @@ export const deleteItem = (authToken, body) => {
 };
 
 export const deleteCart = (authToken) => {
-  return addressAPI.delete("empty-cart/", {
+  return cartAPI.delete("empty-cart/", {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },

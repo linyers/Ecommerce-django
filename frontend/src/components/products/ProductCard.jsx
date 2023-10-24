@@ -1,10 +1,9 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faHeart} from '@fortawesome/free-regular-svg-icons'
+import WishlistHeart from "./WishlistHeart";
 
 export default function Product({ p }) {
   const beforePrice = Math.trunc(p.price / (1 - p.discount / 100));
+  
   return (
     <>
       <div className="flex bg-white px-14 py-5 gap-8">
@@ -16,9 +15,7 @@ export default function Product({ p }) {
           <Link to={`/${p.slug}`} className="text-gray-900 hover:text-gray-900">
             <h3 className="text-xl font-light">{p.title}</h3>
           </Link>
-          <a className="text-xl cursor-pointer text-blue-500 hover:text-blue-500">
-            <FontAwesomeIcon icon={faHeart} />
-          </a>
+          <WishlistHeart product_id={p.id} />
           </div>
           <span className="text-sm text-gray-400">{!p.used ? 'Nuevo' : 'Usado'}</span>
           <Link to={`/${p.slug}`} className="flex w-fit flex-col">

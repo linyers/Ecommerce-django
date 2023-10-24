@@ -1,11 +1,12 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import CartContext from "../../context/CartContext";
 import AuthContext from "../../context/AuthContext";
 import { getOneProduct } from "../../utils/products.api";
 import ModalStock from "./ModalStock";
+import WishlistHeart from "./WishlistHeart";
+import ReviewsList from "../reviews/ReviewsList";
+import CommentsList from "../comments/CommentsList";
 
 export default function Product({ slug }) {
   const navigate = useNavigate();
@@ -23,15 +24,16 @@ export default function Product({ slug }) {
       setProduct(data);
       setImageIdx(0);
     };
+    
     getProduct();
   }, []);
 
   const handlePurchaseNow = async (e, id, quantity) => {
+    e.preventDefault();
     if (!user) {
       navigate("/login");
       return;
     }
-    e.preventDefault();
     const body = {
       product_id: id,
       product_quantity: quantity,
@@ -41,11 +43,11 @@ export default function Product({ slug }) {
   };
 
   const handleAddItemCart = async (e, id, quantity) => {
+    e.preventDefault();
     if (!user) {
       navigate("/login");
       return;
     }
-    e.preventDefault();
     const body = {
       product_id: id,
       product_quantity: quantity,
@@ -79,10 +81,20 @@ export default function Product({ slug }) {
           )}
         </div>
         <hr className="mx-12 my-10" />
-        <div className="px-12">
+        <section className="px-12">
           <h4 className="text-3xl text-gray-950 mb-5">Descripción</h4>
           <p className="text-xl text-gray-600">{product.description}</p>
-        </div>
+        </section>
+        <hr className="mx-12 my-10" />
+        <section className="px-12">
+          <h4 className="text-3xl text-gray-950 mb-5">Comentarios</h4>
+          <CommentsList product_id={product.id} />
+        </section>
+        <hr className="mx-12 my-10" />
+        <section className="px-12">
+          <h4 className="text-3xl text-gray-950 mb-5">Reseñas</h4>
+          <ReviewsList product_id={product.id} />
+        </section>
       </div>
       <div className="w-5/12 h-fit top-5 flex flex-col sticky ring-1 ring-gray-400 rounded-md p-5">
         {product.sold !== 0 && (
@@ -92,9 +104,7 @@ export default function Product({ slug }) {
         )}
         <div className="flex items-baseline justify-between">
           <h1 className="text-2xl font-semibold mt-2 mb-5">{product.title}</h1>
-          <a className="text-2xl cursor-pointer text-blue-500 hover:text-blue-500">
-            <FontAwesomeIcon icon={faHeart} />
-          </a>
+          <WishlistHeart product_id={product.id} />
         </div>
         <span className="mb-5">
           Condición: {!product.used ? "Nuevo" : "Usado"}
@@ -104,7 +114,9 @@ export default function Product({ slug }) {
             <span className="line-through text-gray-500">
               <span className="text-gray-400 font-normal">$ {beforePrice}</span>
             </span>
-            <span className="font-bold text-green-600 text-sm">{product.discount}% OFF</span>
+            <span className="font-bold text-green-600 text-sm">
+              {product.discount}% OFF
+            </span>
           </div>
         )}
         <span className="text-3xl">$ {product.price}</span>

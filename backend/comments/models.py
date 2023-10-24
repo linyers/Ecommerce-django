@@ -6,14 +6,13 @@ User = get_user_model()
 
 class Comment(models.Model):
     comment = models.TextField()
-    created_on = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     product = models.ForeignKey('products.Product', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    @property
     def children(self):
-        return Comment.objects.filter(parent=self).order_by('-created_on').all()
+        return Comment.objects.filter(parent=self).all()
     
     @property
     def is_parent(self):

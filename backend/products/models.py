@@ -62,7 +62,7 @@ class ProductImage(models.Model):
 
 
 def set_slug(sender, instance, *args, **kwargs):
-    if instance.slug.split('-', 1)[1] == str(instance.title).replace(' ', '-'):
+    if instance.slug.split('-', 1)[1] == str(instance.title).replace(' ', '-').lower():
         return
     
     id = str(uuid.uuid4())

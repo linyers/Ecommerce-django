@@ -20,6 +20,7 @@ import "./App.css";
 
 import { AuthProvider } from "./context/AuthContext";
 import { AddressProvider } from "./context/AddressContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import { CartProvider } from "./context/CartContext";
 import { OrdersProvider } from "./context/OrdersContext";
 import BuyingPage from "./pages/buying/BuyingPage";
@@ -33,34 +34,39 @@ function App() {
         <ScrollToTop />
         <AuthProvider>
           <CartProvider>
-            <AddressProvider>
-              <OrdersProvider>
-                <Toaster />
-                <Header />
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/activate/:uid/:token" element={<Activate />} />
-                  <Route
-                    path="/change-password"
-                    element={<ChangePasswordEmail />}
-                  />
-                  <Route
-                    path="/change-password/:uid/:token"
-                    element={<ChangePassword />}
-                  />
-                  <Route path="/user-dashboard" element={<UserDashboard />} />
-                  <Route path="/s" element={<ProductsPage />} />
-                  <Route path="/:slug" element={<ProductsPage />} />
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/buying/" element={<BuyingPage />} />
-                  <Route path="/my-purchases" element={<PurchasesPage />}/>
-                  <Route path="/sell" element={<SellPage />}/>
-                </Routes>
-                <Footer />
-              </OrdersProvider>
-            </AddressProvider>
+            <WishlistProvider>
+              <AddressProvider>
+                <OrdersProvider>
+                  <Toaster />
+                  <Header />
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                      path="/activate/:uid/:token"
+                      element={<Activate />}
+                    />
+                    <Route
+                      path="/change-password"
+                      element={<ChangePasswordEmail />}
+                    />
+                    <Route
+                      path="/change-password/:uid/:token"
+                      element={<ChangePassword />}
+                    />
+                    <Route path="/user-dashboard" element={<UserDashboard />} />
+                    <Route path="/s" element={<ProductsPage />} />
+                    <Route path="/:slug" element={<ProductsPage />} />
+                    <Route path="/cart" element={<CartPage />} />
+                    <Route path="/buying/" element={<BuyingPage />} />
+                    <Route path="/my-purchases" element={<PurchasesPage />} />
+                    <Route path="/sell" element={<SellPage />} />
+                  </Routes>
+                  <Footer />
+                </OrdersProvider>
+              </AddressProvider>
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </Router>

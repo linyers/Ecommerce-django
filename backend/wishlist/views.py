@@ -1,19 +1,22 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Wishlist, WishlistProduct
 from products.serializers import Product, ProductSerializer
 
 
 class GetWishlist(APIView):
+    permission_classes = [IsAuthenticated,]
+
     def get(self, request):
         user = self.request.user
         wishlist = Wishlist.objects.get(user=user)
 
         data = list()
 
-        if WishlistProduct.objects.filter(wishlist=wishlist).exist():
+        if WishlistProduct.objects.filter(wishlist=wishlist).exists():
             wishlist_products = WishlistProduct.objects.filter(wishlist=wishlist)
 
             for item in wishlist_products:
@@ -30,6 +33,8 @@ class GetWishlist(APIView):
 
 
 class AddWishlistItem(APIView):
+    permission_classes = [IsAuthenticated,]
+
     def post(self, request):
         user = request.user
         data = request.data
@@ -70,10 +75,12 @@ class AddWishlistItem(APIView):
                 }
             )
             
-        return Response({'wishlist': data}, status=status.HTTP_200_OK)
+        return Response({'wishlist': data_response}, status=status.HTTP_200_OK)
 
 
 class RemoveWishlistItem(APIView):
+    permission_classes = [IsAuthenticated,]
+
     def delete(self, request):
         user = request.user
         data = request.data
@@ -114,4 +121,4 @@ class RemoveWishlistItem(APIView):
                 }
             )
             
-        return Response({'wishlist': data}, status=status.HTTP_200_OK)
+        return Response({'wishlist': data_response}, status=status.HTTP_200_OK)
