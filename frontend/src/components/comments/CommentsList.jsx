@@ -2,12 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../context/AuthContext";
 import { getComments } from "../../utils/comments.api";
 import Comment from "./Comment";
-import CommentModalForm from "./CommentModalForm";
+import CommentForm from "./CommentForm";
 
 export default function CommentsList({ product_id }) {
   const { user } = useContext(AuthContext);
-  const [open, setOpen] = useState(false);
-  const [parent, setParent] = useState(null);
+  const [open, setOpen] = useState(null); // null = closed, comment.id = open
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
@@ -17,35 +16,34 @@ export default function CommentsList({ product_id }) {
       };
       const response = await getComments(body);
       setComments(response.data);
-      console.log(response.data);
     };
     loadComments();
+    if (open === 0) {
+      setOpen(null);
+    }
   }, [product_id, open]);
 
-  const handleOpenModal = (e) => {
+  const handleOpenForm = (e, id = 0) => {
     e.preventDefault();
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    setOpen(true);
+    setOpen(id);
   };
 
   return (
     <div>
+      <section>
+        <CommentForm handleOpenForm={handleOpenForm} product={product_id} />
+      </section>
       {comments.length > 0 ? (
         <ul>
           {comments.map(
             (comment, i) =>
               !comment.parent && (
-                <li>
-                  <Comment
-                    key={i}
-                    comment={comment}
-                    setParent={setParent}
-                    handleOpenModal={handleOpenModal}
-                  />
-                </li>
+                <Comment
+                  key={i}
+                  comment={comment}
+                  open={open}
+                  handleOpenForm={handleOpenForm}
+                />
               )
           )}
         </ul>
@@ -53,14 +51,6 @@ export default function CommentsList({ product_id }) {
         <span className="font-bold text-lg">
           No hay comentarios en este producto
         </span>
-      )}
-      <button onClick={handleOpenModal}>Comentar</button>
-      {open && (
-        <CommentModalForm
-          setOpen={setOpen}
-          product={product_id}
-          parent={parent}
-        />
       )}
     </div>
   );

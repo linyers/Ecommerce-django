@@ -93,7 +93,7 @@ export default function Product({ slug }) {
         <hr className="mx-12 my-10" />
         <section className="px-12">
           <h4 className="text-3xl text-gray-950 mb-5">Reseñas</h4>
-          <ReviewsList product_id={product.id} />
+          <ReviewsList product_id={product.id} product_rate={product.rating} />
         </section>
       </div>
       <div className="w-5/12 h-fit top-5 flex flex-col sticky ring-1 ring-gray-400 rounded-md p-5">

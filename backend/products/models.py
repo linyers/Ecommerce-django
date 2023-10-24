@@ -44,7 +44,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField()
     author = models.ForeignKey(User, related_name="products", on_delete=models.CASCADE)
-    rating = models.DecimalField(max_digits=2, decimal_places=1, default=0)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, default=None, null=True)
 
     def get_discount(self):
         return self.price * (self.discount * 0.01)

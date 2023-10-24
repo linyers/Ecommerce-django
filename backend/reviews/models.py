@@ -19,8 +19,6 @@ class Review(models.Model):
 def set_product_rating(sender, instance, *args, **kwargs):
     product = instance.product
     product.rating = Review.objects.filter(product=product).aggregate(models.Avg('rate'))['rate__avg']
-    if product.rating is None:
-        product.rating = 0
     product.save()
 
 

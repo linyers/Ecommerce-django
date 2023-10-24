@@ -31,4 +31,5 @@ class CommentSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         commnet_data = validated_data.pop('comment')
         instance.comment = commnet_data
+        instance.save()
         return instance

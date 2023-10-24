@@ -34,7 +34,5 @@ class CommentViewSet(ModelViewSet):
     
     def destroy(self, request, *args, **kwargs):
         comment = self.get_object()
-        if comment.children().exists():
-            return Response({'error': 'You cant delete this comment'}, status=status.HTTP_400_BAD_REQUEST)
         comment.delete()
         return Response({'message': 'Comment deleted successfully'}, status=status.HTTP_204_NO_CONTENT)

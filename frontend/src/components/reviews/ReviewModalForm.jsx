@@ -33,8 +33,6 @@ export default function ReviewModalForm({ setOpen, product }) {
     setOpen(false); 
   };
 
-  const stars = Array.from({ length: 5 }, (_, index) => index + 1);
-
   return (
     <div className="fixed flex items-center justify-center bg-gray-500/20 w-full h-full z-50 top-0 right-0 left-0">
       <div className="bg-gray-200 w-1/2 overflow-scroll rounded-md shadow-lg">
@@ -73,17 +71,17 @@ export default function ReviewModalForm({ setOpen, product }) {
             className="py-2 px-2 w-full h-52 resize-none ring-1 outline-blue-500 ring-gray-500 rounded-sm"
           ></textarea>
           <div className="flex gap-1">
-            {stars.map((s) => (
-              <label htmlFor={`star ${s}`} key={s}>
+            {Array(5).fill().map((_, s) => (
+              <label htmlFor={`star ${s+1}`} key={s}>
                 <input
-                  onChange={(e) => setStar(s)}
-                  id={`star ${s}`}
+                  onChange={(e) => setStar(s+1)}
+                  id={`star ${s+1}`}
                   type="radio"
                   name="rating"
-                  value={s}
+                  value={s+1}
                   className="hidden"
                 />
-                {star === s ? (
+                {star === s+1 ? (
                   <FontAwesomeIcon
                     className="text-blue-600 text-2xl"
                     icon={faStarSolid}

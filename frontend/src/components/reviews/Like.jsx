@@ -26,7 +26,7 @@ export default function Like({ liked, setLiked, setDisliked, id }) {
   
   return (
     <>
-      <a onClick={handleLike} className="text-blue-600 hover:text-blue-500">
+      <a onClick={handleLike} className={`p-1 px-3 rounded-3xl  transition-all duration-200 ease-in ${liked ? 'bg-blue-600 border-0 text-white hover:text-blue-600 hover:bg-white' : 'border-2 text-gray-500 hover:text-blue-500'}`}>
         {liked ? (
           <FontAwesomeIcon icon={faThumbsUpSolid} />
         ) : (
