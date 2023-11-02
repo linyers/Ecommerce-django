@@ -13,7 +13,8 @@ multiples imagenes desde el cliente al servidor.
 
 ## API
 
-`pip install virtualenv  
+```
+pip install virtualenv  
 
 cd backend  
 
@@ -23,12 +24,15 @@ source env/bin/active
 
 pip install -r requirements.txt  
 
-python manage.py runserver`  
+python manage.py runserver  
+```
 
 ## Front
 
-`cd frontend  
+```
+cd frontend  
 
 npm install  
 
-npm run dev`
+npm run dev
+```
