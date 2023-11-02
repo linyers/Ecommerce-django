@@ -29,7 +29,7 @@ export const postAddress = (authToken, body) => {
 };
 
 export const putAddress = (authToken, body, id) => {
-  return addressAPI.put(`${id}`, body, {
+  return addressAPI.put(`${id}/`, body, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },

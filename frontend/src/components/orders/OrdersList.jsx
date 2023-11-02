@@ -8,14 +8,14 @@ import toast from "react-hot-toast";
 const OrderStatusSpan = ({ status, differenceDays }) => {
   const statusDict = {
     on_the_way:
-      differenceDays !== 0 ? `Llega en ${differenceDays} Días` : "Llega hoy",
+      differenceDays > 0 ? `Llega en ${differenceDays} Días` : "Llega hoy",
     delivered: "Entregado",
     pending_refund: "Rembolso pendiente",
     refund_not_accepted: "Rembolso no aceptado",
     refunded: "Rembolsado",
   };
   const statusColor = {
-    on_the_way: differenceDays === 0 && "text-green-600",
+    on_the_way: differenceDays < 0 && "text-green-600",
     delivered: "text-green-600",
     pending_refund: "text-yellow-600",
     refund_not_accepted: "text-red-600",
@@ -80,7 +80,7 @@ export default function OrdersList() {
             <div className="px-8 py-3 flex flex-row justify-between">
               <button
                 disabled={
-                  o.order_status !== "on_the_way" || differenceDays !== 0
+                  o.order_status !== "on_the_way" || differenceDays > 0
                 }
                 onClick={(e) => handleConfirmDelivered(e, o.id)}
                 className="cursor-pointer disabled:cursor-default disabled:bg-blue-300 p-1 px-2 bg-blue-500 text-white hover:bg-blue-600 transition-all duration-200 ease-in hover:border-0 border-0 text-sm"

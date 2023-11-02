@@ -123,6 +123,13 @@ class AddressSerializer(serializers.ModelSerializer):
         }
     
     def validate(self, attrs):
+        if not Address.objects.filter(user=self.context['request'].user, default=True).exists():
+            return super().validate(attrs)
+        
+        if Address.objects.get(user=self.context['request'].user, default=True) == self.instance:
+            return super().validate(attrs)
+
         if Address.objects.filter(user=self.context['request'].user, default=True).exists() and attrs.get('default'):
             raise serializers.ValidationError({'default': 'You already have a default address.'})
+        
         return super().validate(attrs)

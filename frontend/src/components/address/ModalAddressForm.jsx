@@ -12,7 +12,7 @@ export default function ModalAddressForm({ setOpen }) {
   const [country, setCountry] = useState(null);
   const [city, setCity] = useState(null);
   const [zip, setZip] = useState(null);
-  const [defaultAddress, setDefaultAddress] = useState([]);
+  const [defaultAddress, setDefaultAddress] = useState(false);
 
   const closeModal = () => {
     setOpen(false);

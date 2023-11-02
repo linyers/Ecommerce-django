@@ -5,7 +5,6 @@ const reviewsAPI = axios.create({
 });
 
 export const getReviews = (body) => {
-  console.log(body);
   return reviewsAPI.get("", {
     params: body,
   });

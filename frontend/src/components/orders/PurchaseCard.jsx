@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom'
 
 export default function PurchaseCard({ purchases }) {
   return (
@@ -10,9 +11,9 @@ export default function PurchaseCard({ purchases }) {
               className="flex flex-row w-full justify-between items-center"
               key={i}
             >
-              <div className="ml-8 rounded-md my-4 w-28 ring-1 ring-gray-400">
+              <Link to={`/${p.product.slug}`} className="ml-8 rounded-md my-4 w-28 ring-1 ring-gray-400">
                 <img className="rounded-md" src={p.product.images[0]} alt="" />
-              </div>
+              </Link>
               <h4 className="font-bold">{p.product.title}</h4>
               <span className="text-gray-500 px-8">{p.product.author}</span>
             </li>

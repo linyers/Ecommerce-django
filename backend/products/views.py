@@ -44,8 +44,6 @@ class ProductViewSet(CustomViewSet):
             'category': 'category',
             'author': 'author',
             'trending': '',
-            'rating': '',
-            'sold': '',
         }
 
         for k in DICT_QUERYS.keys():
@@ -63,10 +61,12 @@ class FiltersProducts(APIView):
         discounts = Product.objects.values_list('discount', flat=True).filter(discount__isnull=False, title__contains=query)
         discounts = list(set([dis for dis in discounts if str(dis).endswith('0') or dis == 5]))
 
+        categories = list(set(Product.objects.values_list('category__name', flat=True).filter(title__startswith=query)))
         # prices = Product.objects.values_list('price', flat=True).filter(title__startswith=query)
         # price_mean = sum(prices) / len(prices)
 
-        data = {'discounts': sorted(discounts), 'price_mean': None}
+        data = {'discounts': sorted(discounts), 'categories': categories}
+
         return Response(data)
 
 

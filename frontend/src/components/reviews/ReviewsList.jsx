@@ -10,6 +10,7 @@ export default function ReviewsList({ product_id, product_rate }) {
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
   const [open, setOpen] = useState(false);
+  const [change, setChange] = useState(false)
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -21,7 +22,8 @@ export default function ReviewsList({ product_id, product_rate }) {
       setReviews(response.data);
     };
     loadReviews();
-  }, [product_id, open]);
+    setChange(false)
+  }, [product_id, open, change]);
 
   const handleOpenModal = (e) => {
     e.preventDefault();
@@ -44,7 +46,7 @@ export default function ReviewsList({ product_id, product_rate }) {
       {reviews.length > 0 ? (
         <ul>
           {reviews.map((review, i) => (
-            <Review key={i} review={review} />
+            <Review key={i} review={review} setChange={setChange} />
           ))}
         </ul>
       ) : (
