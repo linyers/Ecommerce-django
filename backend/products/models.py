@@ -62,9 +62,11 @@ class ProductImage(models.Model):
 
 
 def set_slug(sender, instance, *args, **kwargs):
-    if instance.slug.split('-', 1)[1] == str(instance.title).replace(' ', '-').lower():
-        return
-    
+    try:
+        if instance.slug.split('-', 1)[1] == slugify(instance.title.replace(' ', '-')):
+            return
+    except IndexError:
+        pass
     id = str(uuid.uuid4())
     title = str(instance.title).replace(' ', '-')
     instance.slug = slugify(f'{id[:8]}-{title}')

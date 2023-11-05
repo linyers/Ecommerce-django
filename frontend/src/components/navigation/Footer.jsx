@@ -26,9 +26,9 @@ function Footer() {
         <ul>
           <li className="text-white mb-4">Ayuda</li>
           <li>
-            <a className="text-gray-400 font-thin">
+            <Link to={'/s?q=a'} className="text-gray-400 font-thin">
               Comprar
-            </a>
+            </Link>
           </li>
           <li>
             <Link to={'/sell'} className="text-gray-400 font-thin">
@@ -44,19 +44,14 @@ function Footer() {
         <ul>
           <li className="text-white mb-4">Mi cuenta</li>
           <li>
-            <a className="text-gray-400 font-thin" href="">
+            <Link to={'/my-purchases'} className="text-gray-400 font-thin">
               Compras
-            </a>
+            </Link>
           </li>
           <li>
-            <a className="text-gray-400 font-thin" href="">
-              Favoritos
-            </a>
-          </li>
-          <li>
-            <a className="text-gray-400 font-thin" href="">
+            <Link to={'/sell'} className="text-gray-400 font-thin">
               Ventas
-            </a>
+            </Link>
           </li>
         </ul>
       </section>

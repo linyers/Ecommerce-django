@@ -77,7 +77,7 @@ export default function Product({ slug }) {
             })}
           </ul>
           {product.images && (
-            <img className="w-fit" src={product.images[imageIdx]} alt="" />
+            <img className="w-3/4 h-fit" src={product.images[imageIdx]} alt="" />
           )}
         </div>
         <hr className="mx-12 my-10" />

@@ -25,9 +25,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         if product.author == user:
             raise serializers.ValidationError({'error': 'You cannot review your own product'})
         
-        if not user.order.filter(purchases__product__id=product.id, order_status='delivered').exists():
+        if not user.order.filter(purchases__product__id=product.id).exists():
             raise serializers.ValidationError({'error': 'You cannot review a product you have not purchased'})
         
+        if user.order.filter(purchases__product__id=product.id, order_status="on_the_way").exists():
+            raise serializers.ValidationError({'error': 'You cannot review a product you have not received'})
+
         if Review.objects.filter(author=user, product=product).exists() and self.context['request'].method == 'POST':
             raise serializers.ValidationError({'error': 'You have already reviewed this product'})
         
